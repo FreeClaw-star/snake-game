@@ -54,6 +54,27 @@
             color: white;
         }
         
+        /* 模式切换按钮 */
+        .mode-switch {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .mode-btn {
+            padding: 6px 14px;
+            font-size: 12px;
+            background: #2a2a4a;
+            border: 2px solid #4a4a6a;
+            border-radius: 15px;
+            color: #aaa;
+            cursor: pointer;
+        }
+        .mode-btn.active {
+            background: #4ecca3;
+            border-color: #4ecca3;
+            color: #1a1a2e;
+        }
+        
         .score {
             font-size: 14px;
             margin: 5px 0;
@@ -184,6 +205,11 @@
 <body>
     <h1>🐍 贪吃蛇</h1>
     
+    <div class="mode-switch">
+        <button class="mode-btn active" id="touchModeBtn" onclick="setMode('touch')">👆 触控</button>
+        <button class="mode-btn" id="tiltModeBtn" onclick="setMode('tilt')">📱 摇盘</button>
+    </div>
+    
     <div class="difficulty">
         <button class="diff-btn active" onclick="setDifficulty(1)">简单</button>
         <button class="diff-btn" onclick="setDifficulty(2)">中等</button>
@@ -233,6 +259,12 @@
         let isRunning = false;
         let lastDirectionChange = 0;
         
+        // 摇盘模式
+        let controlMode = 'touch'; // 'touch' 或 'tilt'
+        let tiltX = 0;
+        let tiltY = 0;
+        let lastTiltDirection = '';
+        
         const difficultySettings = {
             1: { name: '简单', speed: 120, obstacles: 3, growBonus: 1 },
             2: { name: '中等', speed: 90, obstacles: 6, growBonus: 1 },
@@ -246,6 +278,73 @@
             });
             document.getElementById('diffName').textContent = difficultySettings[level].name;
             if (!isRunning) init();
+        }
+        
+        // 切换控制模式
+        function setMode(mode) {
+            controlMode = mode;
+            document.getElementById('touchModeBtn').classList.toggle('active', mode === 'touch');
+            document.getElementById('tiltModeBtn').classList.toggle('active', mode === 'tilt');
+            
+            // 显示/隐藏触控区域
+            document.querySelector('.touch-area').style.display = mode === 'touch' ? 'flex' : 'none';
+            
+            if (mode === 'tilt') {
+                requestTiltPermission();
+            }
+        }
+        
+        // 请求重力感应权限（iOS 13+ 需要）
+        function requestTiltPermission() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && 
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permission => {
+                        if (permission === 'granted') {
+                            window.addEventListener('deviceorientation', handleTilt);
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                window.addEventListener('deviceorientation', handleTilt);
+            }
+        }
+        
+        // 处理重力感应
+        function handleTilt(event) {
+            if (controlMode !== 'tilt' || !isRunning) return;
+            
+            const gamma = event.gamma; // 左右倾斜 (-90 to 90)
+            const beta = event.beta;   // 前后倾斜 (-180 to 180)
+            
+            if (gamma === null || beta === null) return;
+            
+            const now = Date.now();
+            if (now - lastDirectionChange < 150) return; // 限制转向频率
+            
+            // 判定方向（带死区，避免抖动）
+            let newDx = dx;
+            let newDy = dy;
+            
+            if (Math.abs(gamma) > 15) {
+                // 左右倾斜
+                if (gamma > 15 && dx !== -1) {
+                    newDx = 1; newDy = 0;
+                    if (lastTiltDirection !== 'right') { dx = 1; dy = 0; lastTiltDirection = 'right'; lastDirectionChange = now; }
+                } else if (gamma < -15 && dx !== 1) {
+                    newDx = -1; newDy = 0;
+                    if (lastTiltDirection !== 'left') { dx = -1; dy = 0; lastTiltDirection = 'left'; lastDirectionChange = now; }
+                }
+            } else if (Math.abs(beta) > 15) {
+                // 前后倾斜
+                if (beta > 15 && dy !== -1) {
+                    newDx = 0; newDy = 1;
+                    if (lastTiltDirection !== 'down') { dx = 0; dy = 1; lastTiltDirection = 'down'; lastDirectionChange = now; }
+                } else if (beta < 15 && dy !== 1) {
+                    newDx = 0; newDy = -1;
+                    if (lastTiltDirection !== 'up') { dx = 0; dy = -1; lastTiltDirection = 'up'; lastDirectionChange = now; }
+                }
+            }
         }
         
         function init() {
@@ -312,21 +411,37 @@
             document.getElementById('speedLevel').textContent = speedLevel;
         }
         
+        // 颜色配置
+        const colors = {
+            snakeHead: '#e94560',
+            snakeBody: ['#ff6b6b', '#ff8e8e', '#ffa0a0', '#ffb2b2'],
+            food: ['#4ecca3', '#45b7aa', '#ffd93d', '#ff6b6b', '#a855f7'],
+            obstacles: ['#4a4a6a', '#5a5a7a', '#3a3a5a']
+        };
+        
         function draw() {
             ctx.fillStyle = '#1a1a2e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = '#555';
+            // 绘制障碍物（彩色）
+            ctx.fillStyle = colors.obstacles[Math.floor(Math.random() * colors.obstacles.length)];
             obstacles.forEach(obs => {
                 ctx.fillRect(obs.x * gridSize, obs.y * gridSize, gridSize - 2, gridSize - 2);
             });
             
+            // 绘制蛇（彩色渐变）
             snake.forEach((segment, index) => {
-                ctx.fillStyle = index === 0 ? '#e94560' : '#ff6b6b';
+                if (index === 0) {
+                    ctx.fillStyle = colors.snakeHead;
+                } else {
+                    const colorIndex = (index - 1) % colors.snakeBody.length;
+                    ctx.fillStyle = colors.snakeBody[colorIndex];
+                }
                 ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
             });
             
-            ctx.fillStyle = '#4ecca3';
+            // 绘制食物（彩色闪烁）
+            ctx.fillStyle = colors.food[Math.floor(Date.now() / 200) % colors.food.length];
             ctx.beginPath();
             ctx.arc(
                 food.x * gridSize + gridSize / 2,
