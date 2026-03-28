@@ -230,7 +230,7 @@ const PK=Object.keys(P);
 const RACE_NAMES={A:'战士',B:'远程',C:'暗影'};
 
 // State
-let S={r:1,g:GOLD,php:HP,ahp:HP,ph:'prep',bd:{},bn:[],sh:[],ab:{},sel:-1,bu:[],bi:null,w:0,l:0,dq:[]};
+let S={r:1,g:GOLD,php:HP,ahp:HP,ph:'prep',bd:{},bn:[],sh:[],ab:{},sel:-1,bu:[],bi:null,w:0,l:0,dq:[],fx:[]};
 const cv=document.getElementById('c'),cx=cv.getContext('2d');
 let W,H,cw;
 
@@ -262,13 +262,15 @@ function draw(){
   // divider
   const d=cp(R,0);
   cx.strokeStyle='#e94560';cx.lineWidth=2;cx.beginPath();cx.moveTo(2,d.y);cx.lineTo(W-2,d.y);cx.stroke();
-  // labels
   cx.fillStyle='#333';cx.font='9px sans-serif';cx.textAlign='left';
   cx.fillText('🤖 AI 区域',6,cp(0,0).y-cw/2+10);
   cx.fillText('🧑 你的区域',6,cp(R+1,0).y-cw/2+10);
 
   if(S.ph==='battle'){
+    // draw effects behind units
+    S.fx=S.fx.filter(f=>{f.life-=f.decay;if(f.life<=0)return false;drawFx(f);return true});
     S.bu.forEach(u=>{if(u.hp>0)drawBU(u)});
+    // dmg numbers
     S.dq=S.dq.filter(d=>{
       d.life-=0.04;if(d.life<=0)return false;
       cx.save();cx.globalAlpha=d.life;
@@ -281,6 +283,110 @@ function draw(){
     for(let k in S.bd){const[r,c]=k.split(',').map(Number);drawU(r+R+1,c,S.bd[k],false)}
     for(let k in S.ab){const[r,c]=k.split(',').map(Number);drawHidden(r+1,c)}
   }
+}
+
+// ====== ATTACK EFFECTS ======
+function drawFx(f){
+  cx.save();
+  const a=Math.max(0,f.life);
+  cx.globalAlpha=a;
+  if(f.kind==='slash'){
+    // Melee sword slash arc
+    const ang=Math.atan2(f.ty-f.sy,f.tx-f.sx);
+    cx.strokeStyle=f.cr?'#ffff00':'#ffffff';
+    cx.lineWidth=f.cr?3:2;
+    cx.beginPath();
+    cx.arc(f.tx,f.ty,12*(1-a*0.3),ang-1.2+a*0.5,ang+0.2-a*0.3);
+    cx.stroke();
+    // slash particles
+    for(let i=0;i<3;i++){
+      const pa=ang+(-0.5+Math.random())*1.5;
+      const pr=8+Math.random()*10;
+      cx.fillStyle=f.cr?'#ff0':'#eee';
+      cx.fillRect(f.tx+Math.cos(pa)*pr*(1-a)-1,f.ty+Math.sin(pa)*pr*(1-a)-1,2,2);
+    }
+  }
+  else if(f.kind==='arrow'){
+    // Arrow flying from archer to target
+    const t=Math.min(1,(1-a)*2.5);
+    const ax=f.sx+(f.tx-f.sx)*t;
+    const ay=f.sy+(f.ty-f.sy)*t;
+    const ang=Math.atan2(f.ty-f.sy,f.tx-f.sx);
+    cx.strokeStyle='#8B4513';cx.lineWidth=1.5;
+    cx.beginPath();
+    cx.moveTo(ax-Math.cos(ang)*8,ay-Math.sin(ang)*8);
+    cx.lineTo(ax,ay);cx.stroke();
+    // arrow tip
+    cx.fillStyle='#ccc';
+    cx.beginPath();
+    cx.moveTo(ax+Math.cos(ang)*4,ay+Math.sin(ang)*4);
+    cx.lineTo(ax+Math.cos(ang+2.5)*3,ay+Math.sin(ang+2.5)*3);
+    cx.lineTo(ax+Math.cos(ang-2.5)*3,ay+Math.sin(ang-2.5)*3);
+    cx.closePath();cx.fill();
+  }
+  else if(f.kind==='magic'){
+    // Magic burst (AOE)
+    const r2=(1-a)*35;
+    cx.strokeStyle='#9b59b6';cx.lineWidth=2;
+    cx.beginPath();cx.arc(f.tx,f.ty,r2,0,Math.PI*2);cx.stroke();
+    cx.fillStyle=`rgba(155,89,182,${a*0.3})`;
+    cx.beginPath();cx.arc(f.tx,f.ty,r2*0.7,0,Math.PI*2);cx.fill();
+    // sparkles
+    for(let i=0;i<6;i++){
+      const ang2=i*Math.PI/3+f.life*5;
+      const sr=r2*0.8;
+      cx.fillStyle=`rgba(210,180,222,${a})`;
+      cx.beginPath();cx.arc(f.tx+Math.cos(ang2)*sr,f.ty+Math.sin(ang2)*sr,2,0,Math.PI*2);cx.fill();
+    }
+  }
+  else if(f.kind==='bash'){
+    // Shield bash impact
+    const r3=(1-a)*15;
+    cx.strokeStyle='#5dade2';cx.lineWidth=3;
+    cx.beginPath();cx.arc(f.tx,f.ty,r3,0,Math.PI*2);cx.stroke();
+    cx.strokeStyle='#aed6f1';cx.lineWidth=1.5;
+    cx.beginPath();cx.arc(f.tx,f.ty,r3*0.6,0,Math.PI*2);cx.stroke();
+    // impact lines
+    for(let i=0;i<4;i++){
+      const ia=i*Math.PI/2;
+      cx.beginPath();
+      cx.moveTo(f.tx+Math.cos(ia)*r3,f.ty+Math.sin(ia)*r3);
+      cx.lineTo(f.tx+Math.cos(ia)*(r3+6),f.ty+Math.sin(ia)*(r3+6));
+      cx.stroke();
+    }
+  }
+  else if(f.kind==='crit'){
+    // Critical hit flash
+    const bright=a;
+    cx.fillStyle=`rgba(255,255,0,${bright*0.4})`;
+    cx.beginPath();cx.arc(f.tx,f.ty,18*(1-a*0.5),0,Math.PI*2);cx.fill();
+    // star burst
+    cx.strokeStyle=`rgba(255,200,0,${bright})`;cx.lineWidth=2;
+    for(let i=0;i<8;i++){
+      const sa=i*Math.PI/4+f.life*3;
+      cx.beginPath();
+      cx.moveTo(f.tx+Math.cos(sa)*4,f.ty+Math.sin(sa)*4);
+      cx.lineTo(f.tx+Math.cos(sa)*(12+8*(1-a)),f.ty+Math.sin(sa)*(12+8*(1-a)));
+      cx.stroke();
+    }
+    // CRIT text
+    cx.fillStyle=`rgba(255,255,0,${bright})`;cx.font='bold 8px sans-serif';cx.textAlign='center';
+    cx.fillText('暴击!',f.tx,f.ty-18*(1-a));
+  }
+  else if(f.kind==='stab'){
+    // Assassin dual dagger stab - quick slash lines
+    const ang3=Math.atan2(f.ty-f.sy,f.tx-f.sx);
+    cx.strokeStyle='#e67e22';cx.lineWidth=1.5;
+    cx.beginPath();
+    cx.moveTo(f.tx+Math.cos(ang3+0.8)*10,f.ty+Math.sin(ang3+0.8)*10);
+    cx.lineTo(f.tx-Math.cos(ang3+0.8)*6,f.ty-Math.sin(ang3+0.8)*6);
+    cx.stroke();
+    cx.beginPath();
+    cx.moveTo(f.tx+Math.cos(ang3-0.8)*10,f.ty+Math.sin(ang3-0.8)*10);
+    cx.lineTo(f.tx-Math.cos(ang3-0.8)*6,f.ty-Math.sin(ang3-0.8)*6);
+    cx.stroke();
+  }
+  cx.restore();
 }
 
 function drawU(r,c,u,isEnemy){
@@ -439,7 +545,7 @@ function rSyn(){
 function startBattle(){
   if(S.ph!=='prep')return;
   if(!Object.keys(S.bd).length){msg('先买棋子放上场！');return}
-  aiPrep();S.bu=[];S.dq=[];
+  aiPrep();S.bu=[];S.dq=[];S.fx=[];
   const ps=getSyn(S.bd),as=getSyn(S.ab);
   for(let k in S.bd){
     const[r,c]=k.split(',').map(Number),u=S.bd[k],d=P[u.type],p=cp(r+R+1,c);
@@ -472,8 +578,21 @@ function tick(){
       if((d.crit||u.cb)&&Math.random()<.15+(u.cb||0)){dm*=2;cr=true}
       dm=Math.round(dm);near.hp-=dm;
       S.dq.push({val:dm,x:near.x,y:near.y,life:1,cr});
-      if(d.aoe)enemies.forEach(e=>{if(e!==near&&Math.hypot(e.x-near.x,e.y-near.y)<50){
-        const ad=Math.round(dm*.5);e.hp-=ad;S.dq.push({val:ad,x:e.x,y:e.y,life:1,cr:false})}});
+      // Attack effect based on type
+      if(d.aoe){
+        S.fx.push({kind:'magic',tx:near.x,ty:near.y,life:1,decay:0.04});
+        enemies.forEach(e=>{if(e!==near&&Math.hypot(e.x-near.x,e.y-near.y)<50){
+          const ad=Math.round(dm*.5);e.hp-=ad;S.dq.push({val:ad,x:e.x,y:e.y,life:1,cr:false})}});
+      } else if(u.type==='archer'){
+        S.fx.push({kind:'arrow',sx:u.x,sy:u.y,tx:near.x,ty:near.y,life:1,decay:0.06});
+      } else if(u.type==='tank'){
+        S.fx.push({kind:'bash',tx:near.x,ty:near.y,life:1,decay:0.06});
+      } else if(u.type==='assassin'){
+        S.fx.push({kind:'stab',sx:u.x,sy:u.y,tx:near.x,ty:near.y,life:1,decay:0.08});
+      } else {
+        S.fx.push({kind:'slash',sx:u.x,sy:u.y,tx:near.x,ty:near.y,life:1,decay:0.06,cr});
+      }
+      if(cr)S.fx.push({kind:'crit',tx:near.x,ty:near.y,life:1,decay:0.05});
     } else {
       const dx=near.x-u.x,dy=near.y-u.y,dd=Math.hypot(dx,dy);
       u.x+=dx/dd*2;u.y+=dy/dd*2;
@@ -496,7 +615,7 @@ function endBattle(win){
   roll();ui();
 }
 
-function reset(){S={r:1,g:GOLD,php:HP,ahp:HP,ph:'prep',bd:{},bn:[],sh:[],ab:{},sel:-1,bu:[],bi:null,w:0,l:0,dq:[]};roll();ui();draw()}
+function reset(){S={r:1,g:GOLD,php:HP,ahp:HP,ph:'prep',bd:{},bn:[],sh:[],ab:{},sel:-1,bu:[],bi:null,w:0,l:0,dq:[],fx:[]};roll();ui();draw()}
 
 function ui(){
   document.getElementById('php').style.width=(S.php/HP*100)+'%';
