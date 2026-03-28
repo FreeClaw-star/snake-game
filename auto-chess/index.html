@@ -7,581 +7,342 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',sans-serif;overflow-x:hidden;min-height:100vh}
-#app{max-width:600px;margin:0 auto;padding:8px}
-.header{display:flex;justify-content:space-between;align-items:center;padding:8px;background:#16213e;border-radius:8px;margin-bottom:8px}
-.player-info{display:flex;align-items:center;gap:6px;font-size:14px}
-.hp-bar{width:80px;height:14px;background:#333;border-radius:7px;overflow:hidden;position:relative}
+#app{max-width:600px;margin:0 auto;padding:6px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#16213e;border-radius:8px;margin-bottom:6px}
+.player-info{display:flex;align-items:center;gap:4px;font-size:13px}
+.hp-bar{width:70px;height:14px;background:#333;border-radius:7px;overflow:hidden;position:relative}
 .hp-fill{height:100%;border-radius:7px;transition:width .3s}
 .hp-text{position:absolute;top:0;left:0;right:0;text-align:center;font-size:10px;line-height:14px;color:#fff;text-shadow:0 0 2px #000}
-.gold-info{font-size:16px;color:#ffd700;font-weight:bold}
-.round-info{text-align:center;font-size:13px;color:#aaa}
-#game-canvas{width:100%;border-radius:8px;display:block;touch-action:none}
-.synergy-bar{display:flex;gap:6px;padding:6px;background:#16213e;border-radius:8px;margin:8px 0;flex-wrap:wrap;justify-content:center}
-.synergy{padding:3px 8px;border-radius:4px;font-size:11px;background:#222;border:1px solid #444}
+.gold-info{font-size:15px;color:#ffd700;font-weight:bold;text-align:center;padding:2px}
+.round-info{text-align:center;font-size:12px;color:#aaa}
+#game-canvas{width:100%;border-radius:8px;display:block;background:#0a0a1a}
+.synergy-bar{display:flex;gap:4px;padding:4px;background:#16213e;border-radius:6px;margin:6px 0;flex-wrap:wrap;justify-content:center}
+.synergy{padding:2px 6px;border-radius:4px;font-size:10px;background:#222;border:1px solid #444}
 .synergy.active{border-color:#4ecdc4;color:#4ecdc4;background:#1a3a3a}
-.shop{display:flex;gap:6px;padding:8px;background:#16213e;border-radius:8px;margin-bottom:8px;overflow-x:auto}
-.shop-item{flex:1;min-width:70px;padding:6px;background:#0f3460;border-radius:6px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative}
-.shop-item:hover{border-color:#e94560;transform:translateY(-2px)}
-.shop-item.bought{opacity:.4;pointer-events:none}
-.shop-item .icon{font-size:28px}
-.shop-item .name{font-size:11px;margin:2px 0}
-.shop-item .cost{font-size:11px;color:#ffd700}
-.shop-item .stars{font-size:10px;color:#ff6b6b}
-.controls{display:flex;gap:8px;margin-bottom:8px}
-.btn{flex:1;padding:10px;border:none;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer;transition:all .15s}
+.shop{display:flex;gap:4px;padding:6px;background:#16213e;border-radius:8px;margin-bottom:6px;overflow-x:auto}
+.shop-item{flex:1;min-width:60px;padding:5px 4px;background:#0f3460;border-radius:6px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.shop-item:active{border-color:#e94560;transform:scale(.96)}
+.shop-item.bought{opacity:.3;pointer-events:none}
+.shop-item .icon{font-size:24px}
+.shop-item .name{font-size:10px;margin:1px 0}
+.shop-item .cost{font-size:10px;color:#ffd700}
+.shop-item .race{font-size:9px;color:#888}
+.controls{display:flex;gap:6px;margin-bottom:6px}
+.btn{flex:1;padding:10px;border:none;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
 .btn:active{transform:scale(.96)}
 .btn-fight{background:#e94560;color:#fff}
 .btn-fight:disabled{background:#555;cursor:not-allowed}
 .btn-refresh{background:#0f3460;color:#4ecdc4;border:1px solid #4ecdc4}
-.bench{display:flex;gap:4px;padding:6px;background:#16213e;border-radius:8px;min-height:50px;align-items:center;justify-content:center;flex-wrap:wrap}
-.bench-unit{width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:24px;background:#0f3460;border-radius:6px;cursor:pointer;border:2px solid transparent;position:relative}
-.bench-unit.selected{border-color:#ffd700}
-.bench-unit .star-badge{position:absolute;top:-2px;right:-2px;background:#ff6b6b;color:#fff;font-size:8px;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.msg{text-align:center;font-size:13px;color:#e94560;min-height:18px;padding:4px}
-.bench-label{font-size:11px;color:#666;text-align:center;margin-bottom:2px}
+.bench{display:flex;gap:3px;padding:5px;background:#16213e;border-radius:6px;min-height:44px;align-items:center;justify-content:center;flex-wrap:wrap}
+.bench-unit{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;background:#0f3460;border-radius:6px;cursor:pointer;border:2px solid transparent;position:relative;-webkit-tap-highlight-color:transparent}
+.bench-unit.selected{border-color:#ffd700;background:#1a3a60}
+.bench-unit .star-badge{position:absolute;top:-3px;right:-3px;background:#ff6b6b;color:#fff;font-size:8px;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.msg{text-align:center;font-size:12px;color:#e94560;min-height:16px;padding:2px}
+.label{font-size:10px;color:#555;text-align:center;margin:2px 0}
+.help{text-align:center;font-size:10px;color:#444;padding:4px}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="header">
-    <div class="player-info">
-      <span>🧑 你</span>
-      <div class="hp-bar"><div class="hp-fill" id="player-hp" style="width:100%;background:#4ecdc4"></div><div class="hp-text" id="player-hp-text">100</div></div>
-    </div>
-    <div class="round-info" id="round-info">第 1 回合</div>
-    <div class="player-info">
-      <span>🤖 AI</span>
-      <div class="hp-bar"><div class="hp-fill" id="ai-hp" style="width:100%;background:#e94560"></div><div class="hp-text" id="ai-hp-text">100</div></div>
-    </div>
+    <div class="player-info"><span>🧑</span><div class="hp-bar"><div class="hp-fill" id="php" style="width:100%;background:#4ecdc4"></div><div class="hp-text" id="pht">100</div></div></div>
+    <div class="round-info" id="rinfo">第1回合</div>
+    <div class="player-info"><div class="hp-bar"><div class="hp-fill" id="ahp" style="width:100%;background:#e94560"></div><div class="hp-text" id="aht">100</div></div><span>🤖</span></div>
   </div>
-  <div class="gold-info" id="gold-info">💰 10</div>
-  <canvas id="game-canvas"></canvas>
+  <div class="gold-info" id="ginfo">💰10</div>
+  <canvas id="c"></canvas>
   <div class="msg" id="msg"></div>
-  <div class="synergy-bar" id="synergy-bar"></div>
-  <div class="bench-label">📦 手牌区（点击上场/下场）</div>
+  <div class="synergy-bar" id="syn"></div>
+  <div class="label">📦 手牌区（点一下选中→点棋盘放上场 | 再点一下自动上场）</div>
   <div class="bench" id="bench"></div>
   <div class="controls">
-    <button class="btn btn-refresh" onclick="refreshShop()">🔄 刷新 (2💰)</button>
-    <button class="btn btn-fight" id="btn-fight" onclick="startBattle()">⚔️ 开战!</button>
+    <button class="btn btn-refresh" id="btnR">🔄 刷新(2💰)</button>
+    <button class="btn btn-fight" id="btnF">⚔️ 开战!</button>
   </div>
   <div class="shop" id="shop"></div>
+  <div class="help">点击棋盘格子可下场棋子 | 3个同星自动合成</div>
 </div>
 <script>
-// ====== GAME CONFIG ======
-const COLS=5,ROWS=5,CELL_W=50,CELL_H=50,HP_MAX=100,INIT_GOLD=10;
-const PIECES={
-  warrior:{name:'战士',icon:'⚔️',hp:60,atk:12,spd:1.2,range:1,race:'A',cost:1,color:'#e74c3c'},
-  archer:{name:'弓手',icon:'🏹',hp:35,atk:18,spd:0.8,range:3,race:'B',cost:2,color:'#2ecc71'},
-  mage:{name:'法师',icon:'🔮',hp:40,atk:15,spd:1.0,range:2,race:'B',cost:3,color:'#9b59b6',aoe:true},
-  tank:{name:'坦克',icon:'🛡️',hp:90,atk:8,spd:1.5,range:1,race:'A',cost:1,color:'#3498db'},
-  assassin:{name:'刺客',icon:'🗡️',hp:30,atk:25,spd:0.7,range:1,race:'C',cost:2,color:'#e67e22',crit:true}
+// Polyfill roundRect
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);
+    this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();
+  };
+}
+// Config
+const C=5,R=4,HP=100,GOLD=10;
+const P={
+  warrior:{n:'战士',i:'⚔️',hp:60,at:12,sp:1.2,rn:1,race:'A',co:1,cl:'#e74c3c'},
+  archer:{n:'弓手',i:'🏹',hp:35,at:18,sp:0.8,rn:3,race:'B',co:2,cl:'#2ecc71'},
+  mage:{n:'法师',i:'🔮',hp:40,at:15,sp:1.0,rn:2,race:'B',co:3,cl:'#9b59b6',aoe:1},
+  tank:{n:'坦克',i:'🛡️',hp:90,at:8,sp:1.5,rn:1,race:'A',co:1,cl:'#3498db'},
+  assassin:{n:'刺客',i:'🗡️',hp:30,at:25,sp:0.7,rn:1,race:'C',co:2,cl:'#e67e22',crit:1}
 };
-const SYNERGIES=[
-  {id:'A',name:'战士联盟',need:2,desc:'+20%血量',icon:'⚔️'},
-  {id:'B',name:'远程火力',need:2,desc:'+20%攻击',icon:'🎯'},
-  {id:'C',name:'暗影之力',need:2,desc:'+30%暴击',icon:'🌑'}
-];
-const PIECE_KEYS=Object.keys(PIECES);
+const SYN=[{id:'A',n:'战士联盟',nd:2,ds:'+20%血',ic:'⚔️'},{id:'B',n:'远程火力',nd:2,ds:'+20%攻',ic:'🎯'},{id:'C',n:'暗影之力',nd:2,ds:'+30%暴击',ic:'🌑'}];
+const PK=Object.keys(P);
 
-// ====== GAME STATE ======
-let state={round:1,gold:INIT_GOLD,playerHP:HP_MAX,aiHP:HP_MAX,phase:'prep',
-  board:{},bench:[],shop:[],aiBoard:{},aiBench:[],selectedBench:-1,
-  battleUnits:[],battleInterval:null,wins:0,losses:0,dmgQueue:[]};
+// State
+let S={r:1,g:GOLD,php:HP,ahp:HP,ph:'prep',bd:{},bn:[],sh:[],ab:{},sel:-1,bu:[],bi:null,w:0,l:0,dq:[]};
+const cv=document.getElementById('c'),cx=cv.getContext('2d');
+let W,H,cw;
 
-const canvas=document.getElementById('game-canvas');
-const ctx=canvas.getContext('2d');
-let canvasW,canvasH;
-
-// ====== CANVAS SETUP ======
-function resizeCanvas(){
-  const container=canvas.parentElement;
-  canvasW=Math.min(container.clientWidth-16,560);
-  canvasH=canvasW*(ROWS*2+2)/(COLS+0.5);
-  canvas.width=canvasW*2;canvas.height=canvasH*2;
-  canvas.style.width=canvasW+'px';canvas.style.height=canvasH+'px';
-  ctx.scale(2,2);
+function resize(){
+  W=Math.min(cv.parentElement.clientWidth-12,560);
+  cw=(W-8)/C;
+  H=cw*(R*2+1)+12;
+  cv.width=W*2;cv.height=H*2;
+  cv.style.width=W+'px';cv.style.height=H+'px';
+  cx.setTransform(2,0,0,2,0,0);
 }
-resizeCanvas();
-window.addEventListener('resize',()=>{resizeCanvas();drawBoard()});
+resize();
+window.addEventListener('resize',()=>{resize();draw()});
 
-// ====== BOARD COORDS ======
-function cellPos(row,col){
-  const margin=canvasW*0.02;
-  const cellW2=(canvasW-margin*2)/COLS;
-  const cellH2=cellW2;
-  const startY=margin;
-  return{x:margin+col*cellW2+cellW2/2,y:startY+row*cellH2+cellH2/2,w:cellW2,h:cellH2};
-}
+function cp(r,c){return{x:4+c*cw+cw/2,y:4+r*cw+cw/2,w:cw,h:cw}}
 
-// ====== DRAW ======
-function drawBoard(){
-  ctx.clearRect(0,0,canvasW,canvasH);
-  // draw grid
-  for(let r=0;r<ROWS*2+2;r++){
-    for(let c=0;c<COLS;c++){
-      const p=cellPos(r,c);
-      const isPlayerArea=r>=ROWS+1&&r<ROWS*2+1;
-      const isAiArea=r>=1&&r<ROWS+1;
-      ctx.fillStyle=isPlayerArea?'#1a2740':isAiArea?'#2a1a2a':'#111';
-      ctx.strokeStyle='#333';ctx.lineWidth=1;
-      ctx.beginPath();
-      ctx.roundRect(p.x-p.w/2+1,p.y-p.h/2+1,p.w-2,p.h-2,4);
-      ctx.fill();ctx.stroke();
-    }
+// Draw
+function rRect(x,y,w,h,r){cx.beginPath();cx.roundRect(x,y,w,h,r);cx.fill();cx.stroke();}
+
+function draw(){
+  cx.clearRect(0,0,W,H);
+  // grid
+  for(let r=0;r<R*2+1;r++)for(let c=0;c<C;c++){
+    const p=cp(r,c),pa=r>=R+1,aa=r>=1&&r<=R;
+    cx.fillStyle=pa?'#1a2740':aa?'#2a1a2a':r===R?'#111':'#111';
+    cx.strokeStyle='#2a2a4a';cx.lineWidth=1;
+    rRect(p.x-p.w/2+1,p.y-p.h/2+1,p.w-2,p.h-2,4);
   }
-  // divider
-  const mid=cellPos(ROWS,0);
-  ctx.strokeStyle='#e94560';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(4,mid.y);ctx.lineTo(canvasW-4,mid.y);ctx.stroke();
-  // draw units on board
-  const allUnits=state.phase==='battle'?state.battleUnits:[];
-  if(state.phase!=='battle'){
-    // prep: draw player board
-    for(let key in state.board){
-      const[r,c]=key.split(',').map(Number);
-      const unit=state.board[key];
-      drawUnit(r+ROWS+1,c,unit,false);
-    }
-    // draw AI board (hidden during prep? show outlines)
-    for(let key in state.aiBoard){
-      const[r,c]=key.split(',').map(Number);
-      const unit=state.aiBoard[key];
-      drawUnit(r+1,c,unit,true);
-    }
+  // divider line
+  const d=cp(R,0);
+  cx.strokeStyle='#e94560';cx.lineWidth=2;cx.beginPath();cx.moveTo(2,d.y);cx.lineTo(W-2,d.y);cx.stroke();
+  // labels
+  cx.fillStyle='#333';cx.font='9px sans-serif';cx.textAlign='left';
+  cx.fillText('🤖 AI 区域',6,cp(0,0).y-cw/2+10);
+  cx.fillText('🧑 你的区域',6,cp(R+1,0).y-cw/2+10);
+
+  if(S.ph==='battle'){
+    S.bu.forEach(u=>{if(u.hp>0)drawBU(u)});
+    // dmg numbers
+    S.dq=S.dq.filter(d=>{
+      d.life-=0.04;if(d.life<=0)return false;
+      cx.save();cx.globalAlpha=d.life;
+      cx.fillStyle=d.cr?'#ff0':'#ff6b6b';
+      cx.font=`bold ${d.cr?14:11}px sans-serif`;cx.textAlign='center';
+      cx.fillText((d.cr?'💥':'')+d.val,d.x,d.y-(1-d.life)*25);
+      cx.restore();return true;
+    });
   } else {
-    // battle: draw battle units
-    allUnits.forEach(u=>{
-      drawBattleUnit(u);
-    });
-    // draw damage numbers
-    state.dmgQueue=state.dmgQueue.filter(d=>{
-      d.life-=0.03;
-      if(d.life<=0)return false;
-      ctx.save();ctx.globalAlpha=d.life;
-      ctx.fillStyle=d.crit?'#ff0':'#ff6b6b';
-      ctx.font=`bold ${d.crit?16:12}px sans-serif`;
-      ctx.textAlign='center';
-      ctx.fillText((d.crit?'💥':'') + d.val,d.x,d.y-(1-d.life)*30);
-      ctx.restore();
-      return true;
-    });
+    // prep: player units
+    for(let k in S.bd){const[r,c]=k.split(',').map(Number);drawU(r+R+1,c,S.bd[k],0)}
+    // AI units as hidden
+    for(let k in S.ab){const[r,c]=k.split(',').map(Number);drawHidden(r+1,c)}
   }
 }
 
-function drawUnit(r,c,unit,isAI){
-  const p=cellPos(r,c);
-  const sz=p.w*0.7;
-  const def=PIECES[unit.type];
-  // body
-  ctx.fillStyle=isAI?'#4a1a2a':def.color+'44';
-  ctx.strokeStyle=isAI?'#e94560':def.color;
-  ctx.lineWidth=2;
-  ctx.beginPath();ctx.roundRect(p.x-sz/2,p.y-sz/2,sz,sz,6);ctx.fill();ctx.stroke();
-  // icon
-  ctx.font=`${sz*0.55}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(def.icon,p.x,p.y-2);
-  // stars
-  if(unit.star>1){
-    ctx.font='10px sans-serif';ctx.fillStyle='#ffd700';
-    ctx.fillText('⭐'.repeat(unit.star),p.x,p.y+sz/2-6);
-  }
-  // hp bar
-  const bw=sz*0.8,bh=4;
-  ctx.fillStyle='#333';ctx.fillRect(p.x-bw/2,p.y-sz/2-7,bw,bh);
-  ctx.fillStyle=isAI?'#e94560':'#4ecdc4';ctx.fillRect(p.x-bw/2,p.y-sz/2-7,bw*(unit.hp/(def.hp*(unit.star||1)*0.5+def.hp*(unit.star-1))),bh);
+function drawU(r,c,u,ai){
+  const p=cp(r,c),d=P[u.type],sz=p.w*.65;
+  cx.fillStyle=ai?'#3a1520':d.cl+'33';cx.strokeStyle=ai?'#e94560':d.cl;cx.lineWidth=2;
+  rRect(p.x-sz/2,p.y-sz/2,sz,sz,5);
+  cx.font=`${sz*.5}px sans-serif`;cx.textAlign='center';cx.textBaseline='middle';
+  cx.fillStyle='#fff';cx.fillText(d.i,p.x,p.y-1);
+  if(u.star>1){cx.font='9px sans-serif';cx.fillStyle='#ffd700';cx.fillText('⭐'+(u.star>2?'⭐':''),p.x,p.y+sz/2-5)}
 }
 
-function drawBattleUnit(u){
-  const def=PIECES[u.type];
-  const sz=30;
-  // body
-  ctx.fillStyle=u.team==='player'?def.color+'66':'#4a1a2a';
-  ctx.strokeStyle=u.team==='player'?def.color:'#e94560';
-  ctx.lineWidth=2;
-  ctx.beginPath();ctx.roundRect(u.x-sz/2,u.y-sz/2,sz,sz,5);ctx.fill();ctx.stroke();
-  // icon
-  ctx.font=`${sz*0.6}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(def.icon,u.x,u.y-1);
-  // hp bar
-  const bw=sz*0.9,bh=3;
-  ctx.fillStyle='#333';ctx.fillRect(u.x-bw/2,u.y-sz/2-6,bw,bh);
-  ctx.fillStyle=u.team==='player'?'#4ecdc4':'#e94560';
-  const maxHp=u.maxHp||u.hp;
-  ctx.fillRect(u.x-bw/2,u.y-sz/2-6,bw*Math.max(0,u.hp/maxHp),bh);
-  // stars
-  if(u.star>1){ctx.font='8px sans-serif';ctx.fillStyle='#ffd700';ctx.fillText('⭐'.repeat(u.star),u.x,u.y+sz/2-4);}
+function drawHidden(r,c){
+  const p=cp(r,c),sz=p.w*.65;
+  cx.fillStyle='#1a1a2a';cx.strokeStyle='#333';cx.lineWidth=1;
+  rRect(p.x-sz/2,p.y-sz/2,sz,sz,5);
+  cx.font=`${sz*.4}px sans-serif`;cx.textAlign='center';cx.textBaseline='middle';
+  cx.fillStyle='#444';cx.fillText('❓',p.x,p.y);
 }
 
-// ====== GAME LOGIC ======
-function genUID(){return Math.random().toString(36).substr(2,8)}
-
-function rollShop(){
-  state.shop=[];
-  for(let i=0;i<5;i++){
-    const key=PIECE_KEYS[Math.floor(Math.random()*PIECE_KEYS.length)];
-    state.shop.push({type:key,uid:genUID()});
-  }
-  renderShop();
+function drawBU(u){
+  const d=P[u.type],sz=26;
+  cx.fillStyle=u.tm==='p'?d.cl+'55':'#3a1520';cx.strokeStyle=u.tm==='p'?d.cl:'#e94560';cx.lineWidth=2;
+  rRect(u.x-sz/2,u.y-sz/2,sz,sz,4);
+  cx.font=`${sz*.55}px sans-serif`;cx.textAlign='center';cx.textBaseline='middle';
+  cx.fillStyle='#fff';cx.fillText(d.i,u.x,u.y);
+  const bw=sz*.9,bh=3;cx.fillStyle='#222';cx.fillRect(u.x-bw/2,u.y-sz/2-5,bw,bh);
+  cx.fillStyle=u.tm==='p'?'#4ecdc4':'#e94560';
+  cx.fillRect(u.x-bw/2,u.y-sz/2-5,bw*Math.max(0,u.hp/u.mhp),bh);
+  if(u.star>1){cx.font='7px sans-serif';cx.fillStyle='#ffd700';cx.fillText('⭐'.repeat(u.star),u.x,u.y+sz/2-3)}
 }
 
-function renderShop(){
-  const el=document.getElementById('shop');
-  el.innerHTML=state.shop.map((s,i)=>{
-    const def=PIECES[s.type];
-    return`<div class="shop-item ${s.bought?'bought':''}" onclick="buyUnit(${i})">
-      <div class="icon">${def.icon}</div><div class="name">${def.name}</div>
-      <div class="cost">${def.cost}💰</div><div class="stars">${def.race==='A'?'⚔️联盟':def.race==='B'?'🎯远程':'🌑暗影'}</div>
-    </div>`;
+// Shop
+function roll(){S.sh=[];for(let i=0;i<5;i++)S.sh.push({t:PK[Math.random()*PK.length|0],u:Math.random().toString(36).slice(2)});rShop()}
+function rShop(){
+  document.getElementById('shop').innerHTML=S.sh.map((s,i)=>{
+    const d=P[s.t];return`<div class="shop-item${s.b?' bought':''}" onclick="buy(${i})">
+    <div class="icon">${d.i}</div><div class="name">${d.n}</div>
+    <div class="cost">${d.co}💰</div><div class="race">${d.race==='A'?'⚔️':d.race==='B'?'🎯':'🌑'}</div></div>`
   }).join('');
 }
 
-function buyUnit(idx){
-  if(state.phase!=='prep')return;
-  const item=state.shop[idx];
-  if(!item||item.bought)return;
-  const def=PIECES[item.type];
-  if(state.gold<def.cost){showMsg('金币不够！');return}
-  if(state.bench.length>=8){showMsg('手牌满了！');return}
-  state.gold-=def.cost;
-  item.bought=true;
-  // try merge
-  const merged=tryMerge(item.type);
-  if(!merged){
-    state.bench.push({type:item.type,star:1,uid:genUID()});
-  }
-  updateUI();
+function buy(i){
+  if(S.ph!=='prep')return;const s=S.sh[i];if(!s||s.b)return;const d=P[s.t];
+  if(S.g<d.co){msg('金币不够！');return}if(S.bn.length>=8){msg('手牌满了！');return}
+  S.g-=d.co;s.b=true;
+  if(!merge(s.t))S.bn.push({type:s.t,star:1,u:Math.random().toString(36).slice(2)});
+  ui();
+}
+function merge(t){
+  for(let s=1;s<=2;s++){
+    const m=S.bn.filter(u=>u.type===t&&u.star===s);
+    if(m.length>=3){let rm=0;S.bn=S.bn.filter(u=>!(u.type===t&&u.star===s&&rm++<3));
+      if(s<3){S.bn.push({type:t,star:s+1,u:Math.random().toString(36).slice(2)});msg(P[t].i+' 合成⭐'+(s+1)+'!')}
+      return true}
+  }return false;
 }
 
-function tryMerge(type){
-  // count same type same star on bench
-  for(let star=1;star<=2;star++){
-    const matches=state.bench.filter(u=>u.type===type&&u.star===star);
-    if(matches.length>=3){
-      // remove 3, add 1 of next star
-      let removed=0;
-      state.bench=state.bench.filter(u=>{
-        if(u.type===type&&u.star===star&&removed<3){removed++;return false}
-        return true;
-      });
-      if(star<3){
-        state.bench.push({type:type,star:star+1,uid:genUID()});
-        showMsg(`合成！${PIECES[type].icon} → ⭐${star+1}`);
-      }
-      return true;
+document.getElementById('btnR').onclick=()=>{if(S.ph!=='prep'||S.g<2){msg('金币不够！');return}S.g-=2;roll();ui()};
+document.getElementById('btnF').onclick=startBattle;
+
+// Bench
+function rBn(){
+  document.getElementById('bench').innerHTML=S.bn.length?S.bn.map((u,i)=>{
+    const d=P[u.type];
+    return`<div class="bench-unit${S.sel===i?' selected':''}" onclick="cBn(${i})">${d.i}${u.star>1?`<div class="star-badge">${u.star}</div>`:''}</div>`
+  }).join(''):'<span style="color:#444;font-size:11px">空</span>';
+}
+function cBn(i){
+  if(S.ph!=='prep')return;
+  if(S.sel===i){S.sel=-1;autoPlace(i);return}
+  S.sel=i;rBn();
+}
+function autoPlace(bi){
+  const u=S.bn[bi];if(!u)return;
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){const k=r+','+c;if(!S.bd[k]){S.bd[k]={...u};S.bn.splice(bi,1);ui();return}}
+  msg('棋盘满了！');
+}
+
+// Board click
+function boardClick(mx,my){
+  if(S.ph!=='prep')return;
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){
+    const p=cp(r+R+1,c);
+    if(mx>p.x-p.w/2&&mx<p.x+p.w/2&&my>p.y-p.h/2&&my<p.y+p.h/2){
+      const k=r+','+c;
+      if(S.bd[k]){// pick up
+        if(S.bn.length>=8){msg('手牌满了！');return}
+        S.bn.push(S.bd[k]);delete S.bd[k];ui();
+      } else if(S.sel>=0){// place selected
+        S.bd[k]={...S.bn[S.sel]};S.bn.splice(S.sel,1);S.sel=-1;ui();
+      }return;
     }
   }
-  return false;
 }
 
-function refreshShop(){
-  if(state.phase!=='prep')return;
-  if(state.gold<2){showMsg('金币不够刷新！');return}
-  state.gold-=2;
-  rollShop();
-  updateUI();
+// Touch + Click
+function getPos(e){
+  const r=cv.getBoundingClientRect(),sx=W/r.width,sy=H/r.height;
+  const t=e.touches?e.touches[0]:e;
+  return{x:(t.clientX-r.left)*sx,y:(t.clientY-r.top)*sy};
 }
+cv.addEventListener('click',e=>{const p=getPos(e);boardClick(p.x,p.y)});
+cv.addEventListener('touchend',e=>{e.preventDefault();const t=e.changedTouches[0];
+  const r=cv.getBoundingClientRect(),sx=W/r.width,sy=H/r.height;
+  boardClick((t.clientX-r.left)*sx,(t.clientY-r.top)*sy)},{passive:false});
 
-// ====== BENCH & BOARD ======
-function renderBench(){
-  const el=document.getElementById('bench');
-  el.innerHTML=state.bench.map((u,i)=>{
-    const def=PIECES[u.type];
-    return`<div class="bench-unit ${state.selectedBench===i?'selected':''}" onclick="clickBench(${i})">
-      ${def.icon}${u.star>1?`<div class="star-badge">${u.star}</div>`:''}
-    </div>`;
-  }).join('')||'<span style="color:#555;font-size:12px">空</span>';
-}
-
-function clickBench(idx){
-  if(state.phase!=='prep')return;
-  if(state.selectedBench===idx){
-    // put on board
-    state.selectedBench=-1;
-    autoPlaceUnit(idx);
-    return;
-  }
-  state.selectedBench=idx;
-  renderBench();
-}
-
-function autoPlaceUnit(benchIdx){
-  const unit=state.bench[benchIdx];
-  if(!unit)return;
-  // find empty cell in player area (rows ROWS..ROWS*2-1)
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      const key=r+','+c;
-      if(!state.board[key]){
-        state.board[key]={...unit};
-        state.bench.splice(benchIdx,1);
-        updateUI();return;
-      }
-    }
-  }
-  showMsg('棋盘满了！');
-}
-
-function clickBoard(row,col){
-  if(state.phase!=='prep')return;
-  const key=row+','+col;
-  if(state.board[key]){
-    // put back to bench
-    if(state.bench.length>=8){showMsg('手牌满了！');return}
-    state.bench.push(state.board[key]);
-    delete state.board[key];
-    updateUI();return;
-  }
-  // if bench selected, place here
-  if(state.selectedBench>=0){
-    const unit=state.bench[state.selectedBench];
-    state.board[key]={...unit};
-    state.bench.splice(state.selectedBench,1);
-    state.selectedBench=-1;
-    updateUI();
+// AI
+function aiPrep(){
+  S.ab={};const budget=3+S.r*2;let sp=0,pos=[];
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++)pos.push([r,c]);
+  for(let i=pos.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[pos[i],pos[j]]=[pos[j],pos[i]]}
+  let pi=0;
+  while(sp<budget&&pi<pos.length){
+    const k=PK[Math.random()*PK.length|0],d=P[k];
+    if(sp+d.co<=budget){S.ab[pos[pi][0]+','+pos[pi][1]]={type:k,star:1};sp+=d.co;pi++}
+    else break;
   }
 }
 
-// canvas click handler
-canvas.addEventListener('click',e=>{
-  if(state.phase!=='prep')return;
-  const rect=canvas.getBoundingClientRect();
-  const scaleX=canvasW/rect.width;
-  const scaleY=canvasH/rect.height;
-  const mx=(e.clientX-rect.left)*scaleX;
-  const my=(e.clientY-rect.top)*scaleY;
-  // check player board area
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      const p=cellPos(r+ROWS+1,c);
-      if(mx>p.x-p.w/2&&mx<p.x+p.w/2&&my>p.y-p.h/2&&my<p.y+p.h/2){
-        clickBoard(r,c);return;
-      }
-    }
-  }
-});
+// Synergy
+function getSyn(bd){
+  const ct={A:0,B:0,C:0};for(let k in bd)ct[bd[k].race]++;return SYN.filter(s=>ct[s.id]>=s.nd);
+}
+function rSyn(){
+  const a=getSyn(S.bd),ct={A:0,B:0,C:0};for(let k in S.bd)ct[S.bd[k].race]++;
+  document.getElementById('syn').innerHTML=SYN.map(s=>{
+    const on=a.find(x=>x.id===s.id);
+    return`<div class="synergy${on?' active':''}">${s.ic}${s.n}(${ct[s.id]}/${s.nd})${on?'✅':''}</div>`
+  }).join('');
+}
 
-// ====== AI ======
-function aiPrepare(){
-  state.aiBoard={};
-  state.aiBench=[];
-  const budget=3+state.round*2;
-  let spent=0;
-  // buy units
-  while(spent<budget&&state.aiBench.length<8){
-    const key=PIECE_KEYS[Math.floor(Math.random()*PIECE_KEYS.length)];
-    const def=PIECES[key];
-    if(spent+def.cost<=budget){
-      state.aiBench.push({type:key,star:1,uid:genUID()});
-      spent+=def.cost;
-    } else break;
+// Battle
+function startBattle(){
+  if(S.ph!=='prep')return;
+  if(!Object.keys(S.bd).length){msg('先买棋子放上场！');return}
+  aiPrep();S.bu=[];S.dq=[];
+  const ps=getSyn(S.bd),as=getSyn(S.ab);
+  for(let k in S.bd){
+    const[r,c]=k.split(',').map(Number),u=S.bd[k],d=P[u.type],p=cp(r+R+1,c);
+    let hm=1,am=1,cb=0;if(ps.find(s=>s.id==='A'))hm=1.2;if(ps.find(s=>s.id==='B'))am=1.2;if(ps.find(s=>s.id==='C'))cb=.3;
+    const sb=1+(u.star-1)*.5;
+    S.bu.push({...u,tm:'p',x:p.x,y:p.y,hp:d.hp*hm*sb,mhp:d.hp*hm*sb,at:d.at*am*sb,cd:0,cb,sb});
   }
-  // place on board
-  const positions=[];
-  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)positions.push([r,c]);
-  shuffle(positions);
-  state.aiBench.forEach((u,i)=>{
-    if(i<positions.length){
-      state.aiBoard[positions[i][0]+','+positions[i][1]]=u;
+  for(let k in S.ab){
+    const[r,c]=k.split(',').map(Number),u=S.ab[k],d=P[u.type],p=cp(r+1,c);
+    let hm=1,am=1,cb=0;if(as.find(s=>s.id==='A'))hm=1.2;if(as.find(s=>s.id==='B'))am=1.2;if(as.find(s=>s.id==='C'))cb=.3;
+    const sb=1+(u.star-1)*.5;
+    S.bu.push({...u,tm:'a',x:p.x,y:p.y,hp:d.hp*hm*sb,mhp:d.hp*hm*sb,at:d.at*am*sb,cd:0,cb,sb});
+  }
+  S.ph='battle';document.getElementById('btnF').disabled=true;msg('⚔️ 战斗！');
+  if(S.bi)clearInterval(S.bi);
+  S.bi=setInterval(tick,50);
+}
+
+function tick(){
+  const alive=S.bu.filter(u=>u.hp>0);
+  const pl=alive.filter(u=>u.tm==='p'),ai=alive.filter(u=>u.tm==='a');
+  if(!pl.length||!ai.length){clearInterval(S.bi);endBattle(pl.length>0);return}
+  alive.forEach(u=>{
+    u.cd-=.05;if(u.cd>0)return;
+    const d=P[u.type],enemies=alive.filter(e=>e.tm!==u.tm&&e.hp>0);if(!enemies.length)return;
+    let near=enemies[0],md=1e9;
+    enemies.forEach(e=>{const dd=Math.hypot(e.x-u.x,e.y-u.y);if(dd<md){md=dd;near=e}});
+    if(md<=d.rn*cw+15){
+      u.cd=d.sp;let dm=u.at*(.9+Math.random()*.2),cr=false;
+      if((d.crit||u.cb)&&Math.random()<.15+(u.cb||0)){dm*=2;cr=true}
+      dm=Math.round(dm);near.hp-=dm;
+      S.dq.push({val:dm,x:near.x,y:near.y,life:1,cr});
+      if(d.aoe)enemies.forEach(e=>{if(e!==near&&Math.hypot(e.x-near.x,e.y-near.y)<50){
+        const ad=Math.round(dm*.5);e.hp-=ad;S.dq.push({val:ad,x:e.x,y:e.y,life:1,cr:false})}});
+    } else {
+      const dx=near.x-u.x,dy=near.y-u.y,dd=Math.hypot(dx,dy);
+      u.x+=dx/dd*2;u.y+=dy/dd*2;
     }
   });
+  draw();
 }
 
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
-
-// ====== SYNERGIES ======
-function getSynergies(board){
-  const counts={A:0,B:0,C:0};
-  for(let key in board)counts[board[key].race]++;
-  const active=[];
-  SYNERGIES.forEach(s=>{if(counts[s.id]>=s.need)active.push(s)});
-  return{active,counts};
+function endBattle(win){
+  S.ph='prep';document.getElementById('btnF').disabled=false;
+  const dm=5+S.r*2;
+  if(win){S.ahp=Math.max(0,S.ahp-dm);S.w++;msg('🎉 胜！-'+dm+'HP')}
+  else{S.php=Math.max(0,S.php-dm);S.l++;msg('💔 败！-'+dm+'HP')}
+  let inc=5+Math.min(5,S.g/10|0);
+  if(S.w>=3)inc+=2;else if(S.w>=2)inc++;
+  if(S.l>=3)inc+=2;else if(S.l>=2)inc++;
+  S.g+=inc;S.r++;
+  if(S.php<=0){msg('💀 游戏结束');setTimeout(()=>confirm('你输了！再来一局？')&&reset(),500);return}
+  if(S.ahp<=0){msg('🏆 你赢了！');setTimeout(()=>confirm('恭喜获胜！再来一局？')&&reset(),500);return}
+  roll();ui();
 }
 
-function renderSynergies(){
-  const{active,counts}=getSynergies(state.board);
-  const el=document.getElementById('synergy-bar');
-  el.innerHTML=SYNERGIES.map(s=>{
-    const isActive=active.find(a=>a.id===s.id);
-    return`<div class="synergy ${isActive?'active':''}">${s.icon} ${s.name} (${counts[s.id]}/${s.need}) ${isActive?'✅':''}</div>`;
-  }).join('');
-}
+function reset(){S={r:1,g:GOLD,php:HP,ahp:HP,ph:'prep',bd:{},bn:[],sh:[],ab:{},sel:-1,bu:[],bi:null,w:0,l:0,dq:[]};roll();ui();draw()}
 
-// ====== BATTLE ======
-function startBattle(){
-  if(state.phase!=='prep')return;
-  if(Object.keys(state.board).length===0){showMsg('先放棋子上场！');return}
-  aiPrepare();
-  // init battle units
-  state.battleUnits=[];
-  const pSyn=getSynergies(state.board).active;
-  const aSyn=getSynergies(state.aiBoard).active;
-  for(let key in state.board){
-    const[r,c]=key.split(',').map(Number);
-    const u=state.board[key];
-    const def=PIECES[u.type];
-    const pos=cellPos(r+ROWS+1,c);
-    let hpMul=1,atkMul=1,critBonus=0;
-    if(pSyn.find(s=>s.id==='A'))hpMul=1.2;
-    if(pSyn.find(s=>s.id==='B'))atkMul=1.2;
-    if(pSyn.find(s=>s.id==='C'))critBonus=0.3;
-    const starBonus=1+(u.star-1)*0.5;
-    state.battleUnits.push({
-      ...u,team:'player',x:pos.x,y:pos.y,
-      hp:def.hp*hpMul*starBonus,maxHp:def.hp*hpMul*starBonus,
-      atk:def.atk*atkMul*starBonus,cd:0,critBonus,
-      origRow:r,origCol:c
-    });
-  }
-  for(let key in state.aiBoard){
-    const[r,c]=key.split(',').map(Number);
-    const u=state.aiBoard[key];
-    const def=PIECES[u.type];
-    const pos=cellPos(r+1,c);
-    let hpMul=1,atkMul=1,critBonus=0;
-    if(aSyn.find(s=>s.id==='A'))hpMul=1.2;
-    if(aSyn.find(s=>s.id==='B'))atkMul=1.2;
-    if(aSyn.find(s=>s.id==='C'))critBonus=0.3;
-    const starBonus=1+(u.star-1)*0.5;
-    state.battleUnits.push({
-      ...u,team:'ai',x:pos.x,y:pos.y,
-      hp:def.hp*hpMul*starBonus,maxHp:def.hp*hpMul*starBonus,
-      atk:def.atk*atkMul*starBonus,cd:0,critBonus,
-      origRow:r,origCol:c
-    });
-  }
-  state.phase='battle';
-  state.dmgQueue=[];
-  document.getElementById('btn-fight').disabled=true;
-  showMsg('⚔️ 战斗开始！');
-  runBattle();
+function ui(){
+  document.getElementById('php').style.width=(S.php/HP*100)+'%';
+  document.getElementById('pht').textContent=S.php;
+  document.getElementById('ahp').style.width=(S.ahp/HP*100)+'%';
+  document.getElementById('aht').textContent=S.ahp;
+  document.getElementById('rinfo').textContent=`第${S.r}回合 ${S.w}W${S.l}L`;
+  document.getElementById('ginfo').textContent='💰'+S.g;
+  rBn();rSyn();rShop();draw();
 }
+function msg(t){const e=document.getElementById('msg');e.textContent=t;clearTimeout(e._t);e._t=setTimeout(()=>e.textContent='',2500)}
 
-function runBattle(){
-  if(state.battleInterval)clearInterval(state.battleInterval);
-  state.battleInterval=setInterval(()=>{
-    let alive=state.battleUnits.filter(u=>u.hp>0);
-    const players=alive.filter(u=>u.team==='player');
-    const ais=alive.filter(u=>u.team==='ai');
-    if(players.length===0||ais.length===0){
-      clearInterval(state.battleInterval);
-      endBattle(players.length>0);return;
-    }
-    // each unit acts
-    alive.forEach(u=>{
-      u.cd-=0.05;
-      if(u.cd>0)return;
-      const def=PIECES[u.type];
-      const enemies=alive.filter(e=>e.team!==u.team&&e.hp>0);
-      if(enemies.length===0)return;
-      // find nearest enemy
-      let nearest=enemies[0],minD=Infinity;
-      enemies.forEach(e=>{
-        const d=Math.hypot(e.x-u.x,e.y-u.y);
-        if(d<minD){minD=d;nearest=e}
-      });
-      const dist=minD;
-      if(dist<=def.range*50+20){
-        // attack
-        u.cd=def.spd;
-        let dmg=u.atk*(0.9+Math.random()*0.2);
-        let isCrit=false;
-        if(def.crit||u.critBonus>0){
-          const critChance=0.15+(u.critBonus||0);
-          if(Math.random()<critChance){dmg*=2;isCrit=true}
-        }
-        dmg=Math.round(dmg);
-        nearest.hp-=dmg;
-        // aoe
-        if(def.aoe){
-          enemies.forEach(e=>{
-            if(e!==nearest&&Math.hypot(e.x-nearest.x,e.y-nearest.y)<60){
-              const aoeDmg=Math.round(dmg*0.5);
-              e.hp-=aoeDmg;
-              state.dmgQueue.push({val:aoeDmg,x:e.x,y:e.y,life:1,crit:false});
-            }
-          });
-        }
-        state.dmgQueue.push({val:dmg,x:nearest.x,y:nearest.y,life:1,crit:isCrit});
-      } else {
-        // move toward nearest
-        const dx=nearest.x-u.x,dy=nearest.y-u.y;
-        const d=Math.hypot(dx,dy);
-        const speed=2;
-        u.x+=dx/d*speed;u.y+=dy/d*speed;
-      }
-    });
-    drawBoard();
-  },50);
-}
-
-function endBattle(playerWon){
-  state.phase='prep';
-  document.getElementById('btn-fight').disabled=false;
-  const dmg=5+state.round*2;
-  if(playerWon){
-    state.aiHP=Math.max(0,state.aiHP-dmg);
-    state.wins++;
-    showMsg(`🎉 胜！对AI造成${dmg}点伤害`);
-  } else {
-    state.playerHP=Math.max(0,state.playerHP-dmg);
-    state.losses++;
-    showMsg(`💔 败！受到${dmg}点伤害`);
-  }
-  // income
-  let income=5;
-  income+=Math.min(5,Math.floor(state.gold/10));
-  if(state.wins>=3)income+=2;
-  else if(state.wins>=2)income+=1;
-  if(state.losses>=3)income+=2;
-  else if(state.losses>=2)income+=1;
-  state.gold+=income;
-  state.round++;
-  // check game over
-  if(state.playerHP<=0){
-    showMsg('💀 你输了！刷新重新开始');
-    setTimeout(()=>{if(confirm('游戏结束！再来一局？'))resetGame()},1000);
-    return;
-  }
-  if(state.aiHP<=0){
-    showMsg('🏆 你赢了！恭喜！');
-    setTimeout(()=>{if(confirm('恭喜获胜！再来一局？'))resetGame()},1000);
-    return;
-  }
-  rollShop();
-  updateUI();
-}
-
-function resetGame(){
-  state={round:1,gold:INIT_GOLD,playerHP:HP_MAX,aiHP:HP_MAX,phase:'prep',
-    board:{},bench:[],shop:[],aiBoard:{},aiBench:[],selectedBench:-1,
-    battleUnits:[],battleInterval:null,wins:0,losses:0,dmgQueue:[]};
-  rollShop();updateUI();drawBoard();
-}
-
-// ====== UI UPDATE ======
-function updateUI(){
-  document.getElementById('player-hp').style.width=(state.playerHP/HP_MAX*100)+'%';
-  document.getElementById('player-hp-text').textContent=state.playerHP;
-  document.getElementById('ai-hp').style.width=(state.aiHP/HP_MAX*100)+'%';
-  document.getElementById('ai-hp-text').textContent=state.aiHP;
-  document.getElementById('round-info').textContent=`第 ${state.round} 回合 | ${state.wins}W ${state.losses}L`;
-  document.getElementById('gold-info').textContent=`💰 ${state.gold}`;
-  renderBench();
-  renderSynergies();
-  renderShop();
-  drawBoard();
-}
-
-function showMsg(t){
-  const el=document.getElementById('msg');
-  el.textContent=t;
-  setTimeout(()=>{if(el.textContent===t)el.textContent=''},2500);
-}
-
-// ====== INIT ======
-rollShop();
-updateUI();
-drawBoard();
+roll();ui();draw();
 </script>
 </body>
 </html>
