@@ -497,7 +497,7 @@ function boardClick(mx,my){
       const k=r+','+c;
       if(S.bd[k]){
         if(S.bn.length>=8){msg('手牌满了！');return}
-        S.bn.push(S.bd[k]);delete S.bd[k];ui();
+        const _t=S.bd[k].type;S.bn.push(S.bd[k]);delete S.bd[k];merge(_t);ui();
       } else if(S.sel>=0){
         S.bd[k]={...S.bn[S.sel]};S.bn.splice(S.sel,1);S.sel=-1;ui();
       }return;
