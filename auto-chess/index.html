@@ -804,7 +804,14 @@ function drawBU(u){
 }
 
 // Shop - draw character icons on mini canvases
-function roll(){S.sh=[];for(let i=0;i<5;i++)S.sh.push({t:PK[Math.random()*PK.length|0],u:Math.random().toString(36).slice(2)});rShop()}
+function roll(){
+  S.sh=[];
+  // Shuffle all unit types, pick first 5 (no duplicates)
+  const shuffled=[...PK];
+  for(let i=shuffled.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]}
+  for(let i=0;i<5;i++)S.sh.push({t:shuffled[i%shuffled.length],u:Math.random().toString(36).slice(2)});
+  rShop();
+}
 
 function makeCharCanvas(type,w,h,x,y,sz,isEnemy,star){
   const c=document.createElement('canvas');
