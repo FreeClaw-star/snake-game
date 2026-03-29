@@ -513,6 +513,121 @@ function drawChar(ctx,type,cx,cy,sz,isEnemy,star,animPhase){
       ctx.beginPath();ctx.moveTo(2,-6);ctx.lineTo(4,-2);ctx.stroke();
     }
   }
+  else if(type==='ninja'){
+    // === NINJA: teleport behind + backstab ===
+    if(ap>0){
+      const phase=swing;
+      // Ninja vanishes then reappears behind enemy
+      if(phase<0.4){
+        // Fading out / dashing forward
+        const dashOff=phase*25;
+        ctx.translate(dashOff*(isEnemy?-1:1),0);
+        ctx.globalAlpha=1-phase*2;
+      } else {
+        // Reappeared, slashing
+        ctx.globalAlpha=(phase-0.4)*1.67;
+      }
+      // Shuriken throw animation
+      const shurX=phase*20*(isEnemy?-1:1);
+      ctx.strokeStyle='#aaa';ctx.lineWidth=1;
+      for(let i=0;i<4;i++){
+        const sa=i*Math.PI/2+phase*10;
+        ctx.beginPath();
+        ctx.moveTo(shurX+Math.cos(sa)*3,0+Math.sin(sa)*3);
+        ctx.lineTo(shurX+Math.cos(sa+Math.PI)*3,0+Math.sin(sa+Math.PI)*3);
+        ctx.stroke();
+      }
+      // Dual arm slash
+      const slashAngle=Math.sin(phase*Math.PI)*1.5;
+      ctx.strokeStyle=skinColor;ctx.lineWidth=2.5;
+      ctx.beginPath();ctx.moveTo(-7,1);ctx.lineTo(-11+slashAngle*3,5-slashAngle*2);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(7,1);ctx.lineTo(11-slashAngle*3,5-slashAngle*2);ctx.stroke();
+      // Twin blades
+      ctx.strokeStyle='#bdc3c7';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(-11+slashAngle*3,5-slashAngle*2);ctx.lineTo(-14+slashAngle*2,-2-slashAngle*3);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(11-slashAngle*3,5-slashAngle*2);ctx.lineTo(14-slashAngle*2,-2-slashAngle*3);ctx.stroke();
+      // Shadow trail
+      ctx.fillStyle=`rgba(0,0,0,${phase*0.3})`;
+      ctx.beginPath();ctx.arc(-slashAngle*5,2,8,0,Math.PI*2);ctx.fill();
+      ctx.globalAlpha=1;
+    } else {
+      // Idle - crouching pose
+      ctx.translate(0,2); // slight crouch
+      // Arms crossed with blades
+      ctx.beginPath();ctx.moveTo(-7,1);ctx.lineTo(-9,5);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(7,1);ctx.lineTo(9,5);ctx.stroke();
+      // Hidden blades at sides
+      ctx.strokeStyle='#bdc3c7';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(-9,5);ctx.lineTo(-11,0);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(9,5);ctx.lineTo(11,0);ctx.stroke();
+      // Ninja mask + hood
+      ctx.fillStyle='#2c3e50';
+      ctx.beginPath();ctx.moveTo(-7,-5);ctx.lineTo(0,-10);ctx.lineTo(7,-5);ctx.closePath();ctx.fill();
+      // Mask covering lower face
+      ctx.fillStyle='#34495e';
+      ctx.fillRect(-5,-3,10,4);
+      // Eyes - slit, menacing
+      ctx.fillStyle='#e74c3c';
+      ctx.fillRect(-3,-6,2.5,1.5);
+      ctx.fillRect(1,-6,2.5,1.5);
+      ctx.translate(0,-2);
+    }
+  }
+  else if(type==='priest'){
+    // === PRIEST: heal + shield buff ===
+    if(ap>0){
+      const raise=swing;
+      // Hold staff with both hands, golden light
+      const laAngle=-Math.PI/2-raise*0.6;
+      const raAngle=-Math.PI/2+raise*0.3;
+      ctx.beginPath();ctx.moveTo(-7,1);ctx.lineTo(-7+Math.cos(laAngle)*6,1+Math.sin(laAngle)*6);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(7,1);ctx.lineTo(7+Math.cos(raAngle)*6,1+Math.sin(raAngle)*6);ctx.stroke();
+      // Staff with golden cross
+      const staffTopX=0,staffTopY=-14-raise*6;
+      ctx.strokeStyle='#c9a959';ctx.lineWidth=2.5;
+      ctx.beginPath();ctx.moveTo(-1,5);ctx.lineTo(staffTopX,staffTopY);ctx.stroke();
+      // Golden glow
+      const glowSz=5+raise*8;
+      ctx.fillStyle=`rgba(241,196,15,${0.15+raise*0.35})`;
+      ctx.beginPath();ctx.arc(staffTopX,staffTopY,glowSz,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=`rgba(241,196,15,${0.5+raise*0.5})`;
+      ctx.beginPath();ctx.arc(staffTopX,staffTopY,3+raise*3,0,Math.PI*2);ctx.fill();
+      // Cross on staff top
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(staffTopX,staffTopY-5);ctx.lineTo(staffTopX,staffTopY+3);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(staffTopX-3,staffTopY-1);ctx.lineTo(staffTopX+3,staffTopY-1);ctx.stroke();
+      // Shield aura particles around self
+      if(raise>0.5){
+        for(let i=0;i<6;i++){
+          const sa=i*Math.PI/2/6*2+ap*4;
+          ctx.fillStyle=`rgba(241,196,15,${(raise-0.5)*0.8})`;
+          ctx.beginPath();ctx.arc(Math.cos(sa)*12,2+Math.sin(sa)*12,1.5,0,Math.PI*2);ctx.fill();
+        }
+      }
+    } else {
+      // Idle
+      ctx.beginPath();ctx.moveTo(-7,1);ctx.lineTo(-11,6);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(7,1);ctx.lineTo(10,5);ctx.stroke();
+      // Staff
+      ctx.strokeStyle='#c9a959';ctx.lineWidth=2.5;
+      ctx.beginPath();ctx.moveTo(10,5);ctx.lineTo(10,-10);ctx.stroke();
+      // Golden orb with cross
+      ctx.fillStyle='rgba(241,196,15,0.3)';
+      ctx.beginPath();ctx.arc(10,-12,4,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#f1c40f';
+      ctx.beginPath();ctx.arc(10,-12,2.5,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=0.8;
+      ctx.beginPath();ctx.moveTo(10,-14.5);ctx.lineTo(10,-9.5);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(7.5,-12);ctx.lineTo(12.5,-12);ctx.stroke();
+      // Robe collar / hood
+      ctx.fillStyle='#f5f5dc';
+      ctx.beginPath();ctx.moveTo(-6,-7);ctx.lineTo(0,-10);ctx.lineTo(6,-7);ctx.lineTo(5,-4);ctx.lineTo(-5,-4);ctx.closePath();ctx.fill();
+      // Eyes - gentle
+      ctx.fillStyle='#222';
+      ctx.fillRect(-3,-6,1.8,1.8);
+      ctx.fillRect(1.2,-6,1.8,1.8);
+    }
+  }
 
   // Head
   ctx.fillStyle=skinColor;
@@ -551,7 +666,9 @@ const P={
   tank:{n:'坦克',hp:90,at:8,sp:1.5,rn:1,race:'A',co:1},
   assassin:{n:'刺客',hp:30,at:25,sp:0.7,rn:1,race:'C',co:2,crit:1},
   healer:{n:'奶妈',hp:45,at:8,sp:1.8,rn:3,race:'D',co:2,heal:1},
-  berserker:{n:'狂战',hp:55,at:20,sp:0.8,rn:1,race:'A',co:3,ls:0.3}
+  berserker:{n:'狂战',hp:55,at:20,sp:0.8,rn:1,race:'A',co:3,ls:0.3},
+  ninja:{n:'忍者',hp:28,at:22,sp:0.6,rn:1,race:'C',co:3,crit:1,blink:1},
+  priest:{n:'牧师',hp:50,at:10,sp:2.0,rn:3,race:'D',co:3,heal:1,shield:1}
 };
 const SYN=[
   {id:'A',n:'战士联盟',nd:2,ds:'+20%血',ic:'⚔️'},
@@ -737,24 +854,30 @@ function drawFx(f){
     cx.stroke();
   }
   else if(f.kind==='healbeam'){
-    // Healing beam from healer to ally
+    // Healing beam from healer/priest to ally
     const t=Math.min(1,(1-a)*2);
-    cx.strokeStyle=`rgba(46,204,113,${a*0.7})`;cx.lineWidth=2;
+    const beamColor=f.golden?'241,196,15':'46,204,113';
+    cx.strokeStyle=`rgba(${beamColor},${a*0.7})`;cx.lineWidth=f.golden?2.5:2;
     cx.beginPath();cx.moveTo(f.sx,f.sy);cx.lineTo(f.tx,f.ty);cx.stroke();
     // Particles along beam
     for(let i=0;i<4;i++){
       const pt=(t+i*0.2)%1;
       const px=f.sx+(f.tx-f.sx)*pt;
       const py=f.sy+(f.ty-f.sy)*pt;
-      cx.fillStyle=`rgba(46,204,113,${a*0.8})`;
-      cx.beginPath();cx.arc(px,py,2,0,Math.PI*2);cx.fill();
+      cx.fillStyle=`rgba(${beamColor},${a*0.8})`;
+      cx.beginPath();cx.arc(px,py,f.golden?2.5:2,0,Math.PI*2);cx.fill();
     }
     // Heal glow at target
-    cx.fillStyle=`rgba(46,204,113,${a*0.3})`;
+    cx.fillStyle=`rgba(${beamColor},${a*0.3})`;
     cx.beginPath();cx.arc(f.tx,f.ty,10*(1-a*0.5),0,Math.PI*2);cx.fill();
     // +号
     cx.fillStyle=`rgba(255,255,255,${a})`;cx.font='bold 10px sans-serif';cx.textAlign='center';
     cx.fillText('+',f.tx,f.ty-12*(1-a));
+    // Shield icon for priest
+    if(f.golden&&a>0.5){
+      cx.fillStyle=`rgba(241,196,15,${(a-0.5)*1.5})`;cx.font='bold 8px sans-serif';
+      cx.fillText('🛡️',f.tx+8,f.ty-8);
+    }
   }
   else if(f.kind==='rage'){
     // Berserker rage slam - red shockwave
@@ -800,16 +923,21 @@ function drawBU(u){
   cx.fillStyle='#222';cx.fillRect(u.x-bw/2,drawY-sz-2,bw,bh);
   cx.fillStyle=u.tm==='p'?'#4ecdc4':'#e94560';
   cx.fillRect(u.x-bw/2,drawY-sz-2,bw*Math.max(0,u.hp/u.mhp),bh);
+  // Shield indicator
+  if(u.shielded){
+    cx.strokeStyle='rgba(241,196,15,0.6)';cx.lineWidth=1.5;
+    cx.beginPath();cx.arc(u.x,drawY,sz*0.7,0,Math.PI*2);cx.stroke();
+  }
   drawChar(cx,u.type,u.x,drawY,sz,u.tm==='a',u.star,u.animPhase||0);
 }
 
 // Shop - draw character icons on mini canvases
 function roll(){
   S.sh=[];
-  // Shuffle all unit types, pick first 5 (no duplicates)
+  // Shuffle all unit types, pick 6 (no duplicates)
   const shuffled=[...PK];
   for(let i=shuffled.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]}
-  for(let i=0;i<5;i++)S.sh.push({t:shuffled[i%shuffled.length],u:Math.random().toString(36).slice(2)});
+  for(let i=0;i<6;i++)S.sh.push({t:shuffled[i%shuffled.length],u:Math.random().toString(36).slice(2)});
   rShop();
 }
 
@@ -975,10 +1103,10 @@ function tick(){
     u.cd-=.05;if(u.cd>0)return;
     const d=P[u.type];
 
-    // === HEALER: heal lowest HP ally instead of attacking ===
+    // === HEALER/PRIEST: heal lowest HP ally instead of attacking ===
     if(d.heal){
       const allies=alive.filter(a=>a.tm===u.tm&&a.hp>0&&a.hp<a.mhp);
-      if(!allies.length)return; // nothing to heal
+      if(!allies.length)return;
       let wounded=allies[0],whp=allies[0].hp/allies[0].mhp;
       allies.forEach(a=>{const r2=a.hp/a.mhp;if(r2<whp){whp=r2;wounded=a}});
       u.cd=d.sp;u.animPhase=1;
@@ -988,7 +1116,13 @@ function tick(){
       const healAmt=Math.round(d.at*hm*(.9+Math.random()*.2));
       wounded.hp=Math.min(wounded.mhp,wounded.hp+healAmt);
       S.dq.push({val:healAmt,x:wounded.x,y:wounded.y,life:1,cr:false,hl:1});
-      S.fx.push({kind:'healbeam',sx:u.x,sy:u.y,tx:wounded.x,ty:wounded.y,life:1,decay:0.05});
+      if(d.shield){
+        // Priest: golden heal beam + apply shield
+        wounded.shielded=true;
+        S.fx.push({kind:'healbeam',sx:u.x,sy:u.y,tx:wounded.x,ty:wounded.y,life:1,decay:0.05,golden:1});
+      } else {
+        S.fx.push({kind:'healbeam',sx:u.x,sy:u.y,tx:wounded.x,ty:wounded.y,life:1,decay:0.05});
+      }
       return;
     }
 
@@ -1000,9 +1134,21 @@ function tick(){
       u.cd=d.sp;
       // Trigger attack animation
       u.animPhase=1;
+      // Ninja blink: teleport behind enemy
+      if(d.blink){
+        const side=u.tm==='p'?1:-1;
+        const blinkX=near.x+side*12;
+        const blinkY=near.y;
+        u.x=blinkX;u.y=blinkY;
+        S.fx.push({kind:'stab',sx:u.x-side*15,sy:u.y,tx:near.x,ty:near.y,life:1,decay:0.1});
+      }
       let dm=u.at*(.9+Math.random()*.2),cr=false;
       if((d.crit||u.cb)&&Math.random()<.15+(u.cb||0)){dm*=2;cr=true}
-      dm=Math.round(dm);near.hp-=dm;
+      dm=Math.round(dm);
+      // Shield absorption
+      if(near.shielded){dm=Math.round(dm*0.5);near.shielded=false;
+        S.fx.push({kind:'bash',tx:near.x,ty:near.y,life:1,decay:0.08});}
+      near.hp-=dm;
       S.dq.push({val:dm,x:near.x,y:near.y,life:1,cr});
       // Berserker lifesteal
       if(d.ls){
