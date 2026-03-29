@@ -380,6 +380,139 @@ function drawChar(ctx,type,cx,cy,sz,isEnemy,star,animPhase){
       ctx.beginPath();ctx.moveTo(-7,-5);ctx.lineTo(0,-10);ctx.lineTo(7,-5);ctx.closePath();ctx.fill();
     }
   }
+  else if(type==='healer'){
+    // === HEALER: raise staff to heal allies ===
+    if(ap>0){
+      const raise=swing;
+      // Both arms raise the staff
+      const laAngle=-Math.PI/2-raise*0.7;
+      const raAngle=-Math.PI/2+raise*0.3;
+      ctx.beginPath();ctx.moveTo(-7,1);ctx.lineTo(-7+Math.cos(laAngle)*6,1+Math.sin(laAngle)*6);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(7,1);ctx.lineTo(7+Math.cos(raAngle)*6,1+Math.sin(raAngle)*6);ctx.stroke();
+      // Staff held in both hands, angled up
+      const staffBotX=-2+Math.cos(laAngle)*3,staffBotY=1+Math.sin(laAngle)*3;
+      const staffTopX=staffBotX+Math.cos(raAngle-0.3)*18;
+      const staffTopY=staffBotY+Math.sin(raAngle-0.3)*18;
+      ctx.strokeStyle='#c9a959';ctx.lineWidth=2.5;
+      ctx.beginPath();ctx.moveTo(staffBotX,staffBotY);ctx.lineTo(staffTopX,staffTopY);ctx.stroke();
+      // Green healing orb at top
+      const orbSz=3+raise*5;
+      ctx.fillStyle=`rgba(46,204,113,${0.2+raise*0.5})`;
+      ctx.beginPath();ctx.arc(staffTopX,staffTopY-2,orbSz+4,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=`rgba(46,204,113,${0.6+raise*0.4})`;
+      ctx.beginPath();ctx.arc(staffTopX,staffTopY-2,orbSz,0,Math.PI*2);ctx.fill();
+      // Cross symbol
+      ctx.strokeStyle='#fff';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(staffTopX,staffTopY-6);ctx.lineTo(staffTopX,staffTopY+2);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(staffTopX-4,staffTopY-2);ctx.lineTo(staffTopX+4,staffTopY-2);ctx.stroke();
+      // Sparkles floating down
+      for(let i=0;i<4;i++){
+        const sa=i*1.5+ap*3;
+        const sy=staffTopY+2+raise*6+Math.sin(sa)*3;
+        const sx=staffTopX+Math.cos(sa)*4;
+        ctx.fillStyle=`rgba(46,204,113,${raise*0.6})`;
+        ctx.beginPath();ctx.arc(sx,sy,1.2,0,Math.PI*2);ctx.fill();
+      }
+    } else {
+      // Idle - staff held at side
+      ctx.beginPath();ctx.moveTo(-7,1);ctx.lineTo(-11,6);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(7,1);ctx.lineTo(10,5);ctx.stroke();
+      // Staff
+      ctx.strokeStyle='#c9a959';ctx.lineWidth=2.5;
+      ctx.beginPath();ctx.moveTo(10,5);ctx.lineTo(11,-10);ctx.stroke();
+      // Small green orb
+      ctx.fillStyle='rgba(46,204,113,0.3)';
+      ctx.beginPath();ctx.arc(11,-12,4,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#2ecc71';
+      ctx.beginPath();ctx.arc(11,-12,2.5,0,Math.PI*2);ctx.fill();
+      // Cross on orb
+      ctx.strokeStyle='#fff';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(11,-14.5);ctx.lineTo(11,-9.5);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(8.5,-12);ctx.lineTo(13.5,-12);ctx.stroke();
+      // Headdress / veil
+      ctx.fillStyle='#a8e6cf';
+      ctx.beginPath();ctx.moveTo(-6,-8);ctx.lineTo(0,-11);ctx.lineTo(6,-8);ctx.lineTo(5,-5);ctx.lineTo(-5,-5);ctx.closePath();ctx.fill();
+    }
+  }
+  else if(type==='berserker'){
+    // === BERSERKER: dual axe overhead slam ===
+    if(ap>0){
+      // Lunge forward aggressively
+      const lunge=swing;
+      // Both arms raised then slam down
+      const armAngle=-Math.PI*0.8+lunge*Math.PI*1.1;
+      // Left arm + axe
+      const lShX=-7,lShY=1;
+      const lElX=lShX+Math.cos(armAngle-0.2)*7;
+      const lElY=lShY+Math.sin(armAngle-0.2)*7;
+      ctx.beginPath();ctx.moveTo(lShX,lShY);ctx.lineTo(lElX,lElY);ctx.stroke();
+      // Left axe
+      ctx.strokeStyle='#888';ctx.lineWidth=2;
+      const laEndX=lElX+Math.cos(armAngle)*12;
+      const laEndY=lElY+Math.sin(armAngle)*12;
+      ctx.beginPath();ctx.moveTo(lElX,lElY);ctx.lineTo(laEndX,laEndY);ctx.stroke();
+      // Left axe head (curved blade)
+      ctx.fillStyle='#aaa';
+      ctx.beginPath();
+      ctx.ellipse(laEndX,laEndY,5,3,armAngle,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#ccc';
+      ctx.beginPath();
+      ctx.ellipse(laEndX+Math.cos(armAngle)*1,laEndY+Math.sin(armAngle)*1,3,2,armAngle,0,Math.PI*2);ctx.fill();
+
+      // Right arm + axe (slightly offset)
+      ctx.strokeStyle=skinColor;ctx.lineWidth=2.5;
+      const rShX=7,rShY=1;
+      const rElX=rShX+Math.cos(armAngle+0.2)*7;
+      const rElY=rShY+Math.sin(armAngle+0.2)*7;
+      ctx.beginPath();ctx.moveTo(rShX,rShY);ctx.lineTo(rElX,rElY);ctx.stroke();
+      // Right axe
+      ctx.strokeStyle='#888';ctx.lineWidth=2;
+      const raEndX=rElX+Math.cos(armAngle)*12;
+      const raEndY=rElY+Math.sin(armAngle)*12;
+      ctx.beginPath();ctx.moveTo(rElX,rElY);ctx.lineTo(raEndX,raEndY);ctx.stroke();
+      // Right axe head
+      ctx.fillStyle='#aaa';
+      ctx.beginPath();
+      ctx.ellipse(raEndX,raEndY,5,3,armAngle,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#ccc';
+      ctx.beginPath();
+      ctx.ellipse(raEndX+Math.cos(armAngle)*1,raEndY+Math.sin(armAngle)*1,3,2,armAngle,0,Math.PI*2);ctx.fill();
+
+      // Rage glow around body
+      ctx.fillStyle=`rgba(231,76,60,${lunge*0.2})`;
+      ctx.beginPath();ctx.arc(0,2,14,0,Math.PI*2);ctx.fill();
+      // Rage veins / sparks
+      for(let i=0;i<3;i++){
+        const sa=Math.random()*Math.PI*2;
+        const sr=10+Math.random()*6;
+        ctx.fillStyle=`rgba(255,${50+Math.random()*100},0,${lunge*0.7})`;
+        ctx.fillRect(Math.cos(sa)*sr-1,2+Math.sin(sa)*sr-1,2,2);
+      }
+    } else {
+      // Idle - axes at sides, aggressive stance
+      // Left arm holding axe down
+      ctx.beginPath();ctx.moveTo(-7,1);ctx.lineTo(-11,7);ctx.stroke();
+      ctx.strokeStyle='#888';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(-11,7);ctx.lineTo(-11,14);ctx.stroke();
+      ctx.fillStyle='#aaa';
+      ctx.beginPath();ctx.ellipse(-11,14,4,2.5,0,0,Math.PI*2);ctx.fill();
+      // Right arm holding axe down
+      ctx.strokeStyle=skinColor;ctx.lineWidth=2.5;
+      ctx.beginPath();ctx.moveTo(7,1);ctx.lineTo(11,7);ctx.stroke();
+      ctx.strokeStyle='#888';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(11,7);ctx.lineTo(11,14);ctx.stroke();
+      ctx.fillStyle='#aaa';
+      ctx.beginPath();ctx.ellipse(11,14,4,2.5,0,0,Math.PI*2);ctx.fill();
+      // Scarred face / angry eyebrows
+      // Helmet horns
+      ctx.fillStyle='#7f8c8d';
+      ctx.beginPath();ctx.moveTo(-5,-9);ctx.lineTo(-8,-16);ctx.lineTo(-3,-9);ctx.closePath();ctx.fill();
+      ctx.beginPath();ctx.moveTo(5,-9);ctx.lineTo(8,-16);ctx.lineTo(3,-9);ctx.closePath();ctx.fill();
+      // Scar
+      ctx.strokeStyle='#cc6666';ctx.lineWidth=0.8;
+      ctx.beginPath();ctx.moveTo(2,-6);ctx.lineTo(4,-2);ctx.stroke();
+    }
+  }
 
   // Head
   ctx.fillStyle=skinColor;
@@ -416,11 +549,18 @@ const P={
   archer:{n:'弓手',hp:35,at:18,sp:0.8,rn:3,race:'B',co:2},
   mage:{n:'法师',hp:40,at:15,sp:1.0,rn:2,race:'B',co:3,aoe:1},
   tank:{n:'坦克',hp:90,at:8,sp:1.5,rn:1,race:'A',co:1},
-  assassin:{n:'刺客',hp:30,at:25,sp:0.7,rn:1,race:'C',co:2,crit:1}
+  assassin:{n:'刺客',hp:30,at:25,sp:0.7,rn:1,race:'C',co:2,crit:1},
+  healer:{n:'奶妈',hp:45,at:8,sp:1.8,rn:3,race:'D',co:2,heal:1},
+  berserker:{n:'狂战',hp:55,at:20,sp:0.8,rn:1,race:'A',co:3,ls:0.3}
 };
-const SYN=[{id:'A',n:'战士联盟',nd:2,ds:'+20%血',ic:'⚔️'},{id:'B',n:'远程火力',nd:2,ds:'+20%攻',ic:'🎯'},{id:'C',n:'暗影之力',nd:2,ds:'+30%暴击',ic:'🌑'}];
+const SYN=[
+  {id:'A',n:'战士联盟',nd:2,ds:'+20%血',ic:'⚔️'},
+  {id:'B',n:'远程火力',nd:2,ds:'+20%攻',ic:'🎯'},
+  {id:'C',n:'暗影之力',nd:2,ds:'+30%暴击',ic:'🌑'},
+  {id:'D',n:'神圣祝福',nd:2,ds:'+30%治疗',ic:'💚'}
+];
 const PK=Object.keys(P);
-const RACE_NAMES={A:'战士',B:'远程',C:'暗影'};
+const RACE_NAMES={A:'战士',B:'远程',C:'暗影',D:'神圣'};
 
 // State
 let S={r:1,g:GOLD,php:HP,ahp:HP,ph:'prep',bd:{},bn:[],sh:[],ab:{},sel:-1,bu:[],bi:null,w:0,l:0,dq:[],fx:[]};
@@ -478,9 +618,15 @@ function draw(){
     S.dq=S.dq.filter(d=>{
       d.life-=0.04;if(d.life<=0)return false;
       cx.save();cx.globalAlpha=d.life;
-      cx.fillStyle=d.cr?'#ff0':'#ff6b6b';
-      cx.font=`bold ${d.cr?14:11}px sans-serif`;cx.textAlign='center';
-      cx.fillText((d.cr?'💥':'')+d.val,d.x,d.y-(1-d.life)*25);
+      if(d.hl){
+        cx.fillStyle='#2ecc71';
+        cx.font='bold 11px sans-serif';cx.textAlign='center';
+        cx.fillText('+'+d.val,d.x,d.y-(1-d.life)*25);
+      } else {
+        cx.fillStyle=d.cr?'#ff0':'#ff6b6b';
+        cx.font=`bold ${d.cr?14:11}px sans-serif`;cx.textAlign='center';
+        cx.fillText((d.cr?'💥':'')+d.val,d.x,d.y-(1-d.life)*25);
+      }
       cx.restore();return true;
     });
   } else {
@@ -589,6 +735,41 @@ function drawFx(f){
     cx.moveTo(f.tx+Math.cos(ang3-0.8)*10,f.ty+Math.sin(ang3-0.8)*10);
     cx.lineTo(f.tx-Math.cos(ang3-0.8)*6,f.ty-Math.sin(ang3-0.8)*6);
     cx.stroke();
+  }
+  else if(f.kind==='healbeam'){
+    // Healing beam from healer to ally
+    const t=Math.min(1,(1-a)*2);
+    cx.strokeStyle=`rgba(46,204,113,${a*0.7})`;cx.lineWidth=2;
+    cx.beginPath();cx.moveTo(f.sx,f.sy);cx.lineTo(f.tx,f.ty);cx.stroke();
+    // Particles along beam
+    for(let i=0;i<4;i++){
+      const pt=(t+i*0.2)%1;
+      const px=f.sx+(f.tx-f.sx)*pt;
+      const py=f.sy+(f.ty-f.sy)*pt;
+      cx.fillStyle=`rgba(46,204,113,${a*0.8})`;
+      cx.beginPath();cx.arc(px,py,2,0,Math.PI*2);cx.fill();
+    }
+    // Heal glow at target
+    cx.fillStyle=`rgba(46,204,113,${a*0.3})`;
+    cx.beginPath();cx.arc(f.tx,f.ty,10*(1-a*0.5),0,Math.PI*2);cx.fill();
+    // +号
+    cx.fillStyle=`rgba(255,255,255,${a})`;cx.font='bold 10px sans-serif';cx.textAlign='center';
+    cx.fillText('+',f.tx,f.ty-12*(1-a));
+  }
+  else if(f.kind==='rage'){
+    // Berserker rage slam - red shockwave
+    const r3=(1-a)*20;
+    cx.strokeStyle=`rgba(231,76,60,${a*0.8})`;cx.lineWidth=3;
+    cx.beginPath();cx.arc(f.tx,f.ty,r3,0,Math.PI*2);cx.stroke();
+    cx.strokeStyle=`rgba(255,100,50,${a*0.4})`;cx.lineWidth=1.5;
+    cx.beginPath();cx.arc(f.tx,f.ty,r3*0.6,0,Math.PI*2);cx.stroke();
+    // Blood splatter particles
+    for(let i=0;i<5;i++){
+      const sa=i*Math.PI*2/5+f.life*4;
+      const sr=r3*0.8;
+      cx.fillStyle=`rgba(200,0,0,${a*0.7})`;
+      cx.beginPath();cx.arc(f.tx+Math.cos(sa)*sr,f.ty+Math.sin(sa)*sr,1.5,0,Math.PI*2);cx.fill();
+    }
   }
   cx.restore();
 }
@@ -736,10 +917,10 @@ function aiPrep(){
 
 // Synergy
 function getSyn(bd){
-  const ct={A:0,B:0,C:0};for(let k in bd)ct[bd[k].race]++;return SYN.filter(s=>ct[s.id]>=s.nd);
+  const ct={A:0,B:0,C:0,D:0};for(let k in bd)ct[bd[k].race]++;return SYN.filter(s=>ct[s.id]>=s.nd);
 }
 function rSyn(){
-  const a=getSyn(S.bd),ct={A:0,B:0,C:0};for(let k in S.bd)ct[S.bd[k].race]++;
+  const a=getSyn(S.bd),ct={A:0,B:0,C:0,D:0};for(let k in S.bd)ct[S.bd[k].race]++;
   document.getElementById('syn').innerHTML=SYN.map(s=>{
     const on=a.find(x=>x.id===s.id);
     return`<div class="synergy${on?' active':''}">${s.ic}${s.n}(${ct[s.id]}/${s.nd})${on?'✅':''}</div>`
@@ -785,7 +966,27 @@ function tick(){
     if(u.animPhase>0){u.animPhase=Math.max(0,u.animPhase-0.08)}
 
     u.cd-=.05;if(u.cd>0)return;
-    const d=P[u.type],enemies=alive.filter(e=>e.tm!==u.tm&&e.hp>0);if(!enemies.length)return;
+    const d=P[u.type];
+
+    // === HEALER: heal lowest HP ally instead of attacking ===
+    if(d.heal){
+      const allies=alive.filter(a=>a.tm===u.tm&&a.hp>0&&a.hp<a.mhp);
+      if(!allies.length)return; // nothing to heal
+      let wounded=allies[0],whp=allies[0].hp/allies[0].mhp;
+      allies.forEach(a=>{const r2=a.hp/a.mhp;if(r2<whp){whp=r2;wounded=a}});
+      u.cd=d.sp;u.animPhase=1;
+      // Check synergy bonus
+      const dsyn=u.tm==='p'?getSyn(S.bd):getSyn(S.ab);
+      let hm=1;if(dsyn.find(s=>s.id==='D'))hm=1.3;
+      const healAmt=Math.round(d.at*hm*(.9+Math.random()*.2));
+      wounded.hp=Math.min(wounded.mhp,wounded.hp+healAmt);
+      S.dq.push({val:healAmt,x:wounded.x,y:wounded.y,life:1,cr:false,hl:1});
+      S.fx.push({kind:'healbeam',sx:u.x,sy:u.y,tx:wounded.x,ty:wounded.y,life:1,decay:0.05});
+      return;
+    }
+
+    // === NORMAL ATTACK + BERSERKER LIFESTEAL ===
+    const enemies=alive.filter(e=>e.tm!==u.tm&&e.hp>0);if(!enemies.length)return;
     let near=enemies[0],md=1e9;
     enemies.forEach(e=>{const dd=Math.hypot(e.x-u.x,e.y-u.y);if(dd<md){md=dd;near=e}});
     if(md<=d.rn*cw+15){
@@ -796,6 +997,13 @@ function tick(){
       if((d.crit||u.cb)&&Math.random()<.15+(u.cb||0)){dm*=2;cr=true}
       dm=Math.round(dm);near.hp-=dm;
       S.dq.push({val:dm,x:near.x,y:near.y,life:1,cr});
+      // Berserker lifesteal
+      if(d.ls){
+        const lsAmt=Math.round(dm*d.ls);
+        u.hp=Math.min(u.mhp,u.hp+lsAmt);
+        S.dq.push({val:lsAmt,x:u.x,y:u.y,life:1,cr:false,hl:1});
+        S.fx.push({kind:'rage',tx:near.x,ty:near.y,life:1,decay:0.05});
+      }
       // Attack effect based on type
       if(d.aoe){
         S.fx.push({kind:'magic',tx:near.x,ty:near.y,life:1,decay:0.04});
