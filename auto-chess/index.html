@@ -1005,7 +1005,7 @@ function cBn(i){
 }
 function autoPlace(bi){
   const u=S.bn[bi];if(!u)return;
-  for(let r=0;r<R;r++)for(let c=0;c<C;c++){const k=r+','+c;if(!S.bd[k]){S.bd[k]={...u};S.bn.splice(bi,1);ui();return}}
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){const k=r+','+c;if(!S.bd[k]){const nu={...u};nu.race=P[u.type].race;S.bd[k]=nu;S.bn.splice(bi,1);ui();return}}
   msg('棋盘满了！');
 }
 
@@ -1020,7 +1020,7 @@ function boardClick(mx,my){
         if(S.bn.length>=8){msg('手牌满了！');return}
         const _t=S.bd[k].type;S.bn.push(S.bd[k]);delete S.bd[k];merge(_t);ui();
       } else if(S.sel>=0){
-        S.bd[k]={...S.bn[S.sel]};S.bn.splice(S.sel,1);S.sel=-1;ui();
+        const nu={...S.bn[S.sel]};nu.race=P[nu.type].race;S.bd[k]=nu;S.bn.splice(S.sel,1);S.sel=-1;ui();
       }return;
     }
   }
@@ -1052,10 +1052,10 @@ function aiPrep(){
 
 // Synergy
 function getSyn(bd){
-  const ct={A:0,B:0,C:0,D:0};for(let k in bd)ct[P[bd[k].type].race]++;return SYN.filter(s=>ct[s.id]>=s.nd);
+  const ct={A:0,B:0,C:0,D:0};for(let k in bd)ct[bd[k].race||P[bd[k].type].race]++;return SYN.filter(s=>ct[s.id]>=s.nd);
 }
 function rSyn(){
-  const a=getSyn(S.bd),ct={A:0,B:0,C:0,D:0};for(let k in S.bd)ct[P[S.bd[k].type].race]++;
+  const a=getSyn(S.bd),ct={A:0,B:0,C:0,D:0};for(let k in S.bd)ct[S.bd[k].race||P[S.bd[k].type].race]++;
   document.getElementById('syn').innerHTML=SYN.map(s=>{
     const on=a.find(x=>x.id===s.id);
     return`<div class="synergy${on?' active':''}">${s.ic}${s.n}(${ct[s.id]}/${s.nd})${on?'✅':''}</div>`
