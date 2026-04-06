@@ -72,13 +72,13 @@ body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',sans-serif;overflow-x:
   <div class="king-controls" id="kingControls" style="margin:6px 0">
     <div class="dpad">
       <div class="dp empty"></div>
-      <div class="dp" id="dpUp" ontouchstart="kingDir='up'" onmousedown="kingDir='up'" onmouseup="kingDir=null" onmouseleave="kingDir=null" ontouchend="kingDir=null">⬆️</div>
+      <div class="dp" id="dpUp" ontouchstart="kingDir='up'" ontouchend="kingDir=null" onmouseup="kingDir=null">⬆️</div>
       <div class="dp empty"></div>
-      <div class="dp" id="dpLeft" ontouchstart="kingDir='left'" onmousedown="kingDir='left'" onmouseup="kingDir=null" onmouseleave="kingDir=null" ontouchend="kingDir=null">⬅️</div>
+      <div class="dp" id="dpLeft" ontouchstart="kingDir='left'" ontouchend="kingDir=null" onmouseup="kingDir=null">⬅️</div>
       <div class="dp empty"></div>
-      <div class="dp" id="dpRight" ontouchstart="kingDir='right'" onmousedown="kingDir='right'" onmouseup="kingDir=null" onmouseleave="kingDir=null" ontouchend="kingDir=null">➡️</div>
+      <div class="dp" id="dpRight" ontouchstart="kingDir='right'" ontouchend="kingDir=null" onmouseup="kingDir=null">➡️</div>
       <div class="dp empty"></div>
-      <div class="dp" id="dpDown" ontouchstart="kingDir='down'" onmousedown="kingDir='down'" onmouseup="kingDir=null" onmouseleave="kingDir=null" ontouchend="kingDir=null">⬇️</div>
+      <div class="dp" id="dpDown" ontouchstart="kingDir='down'" ontouchend="kingDir=null" onmouseup="kingDir=null">⬇️</div>
       <div class="dp empty"></div>
     </div>
     <button class="atk-btn" id="atkBtn" ontouchstart="kingAttack()" onmousedown="kingAttack()">⚔️攻击</button>
@@ -1442,6 +1442,14 @@ function tick(){
         u.cd=0;
       }
       return; // Either mode: if was out of range, we moved and done for this tick
+    }
+
+    // King manual mode: if in range, still attack but don't move (let player control)
+    // Exception: if attack was just triggered by button (cd was just reset), allow attack
+    if(u.isKing && kingManual && md<=attackRange*cw+15){
+      // In range and manual mode: don't auto-attack if cooldown not reset
+      if(u.cd > 0) return; // Still on cooldown, don't attack
+      // cd was reset by attack button, fall through to attack
     }
 
     if(md<=attackRange*cw+15){
