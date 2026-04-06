@@ -20,7 +20,7 @@ body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',sans-serif}
 .synergy{padding:2px 6px;border-radius:4px;font-size:10px;background:#222;border:1px solid #444}
 .synergy.active{border-color:#4ecdc4;color:#4ecdc4;background:#1a3a3a}
 .shop{display:flex;gap:3px;padding:4px;background:#16213e;border-radius:8px;margin-bottom:6px;overflow-x:auto}
-.shop-item{flex:0 0 auto;min-width:52px;padding:3px 2px;background:#0f3460;border-radius:6px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.shop-item{flex:0 0 auto;min-width:52px;padding:3px 2px;background:#0f3460;border-radius:6px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
 .shop-item:active{border-color:#e94560;transform:scale(.96)}
 .shop-item.bought{opacity:.3;pointer-events:none}
 .shop-item canvas{display:block;margin:0 auto 2px}
@@ -28,13 +28,13 @@ body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',sans-serif}
 .shop-item .cost{font-size:10px;color:#ffd700}
 .shop-item .race{font-size:9px;color:#888}
 .controls{display:flex;gap:6px;margin-bottom:6px}
-.btn{flex:1;padding:10px;border:none;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.btn{flex:1;padding:10px;border:none;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer;transition:all .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
 .btn:active{transform:scale(.96)}
 .btn-fight{background:#e94560;color:#fff}
 .btn-fight:disabled{background:#555;cursor:not-allowed}
 .btn-refresh{background:#0f3460;color:#4ecdc4;border:1px solid #4ecdc4}
 .bench{display:flex;gap:3px;padding:5px;background:#16213e;border-radius:6px;min-height:44px;align-items:center;justify-content:center;flex-wrap:wrap}
-.bench-unit{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#0f3460;border-radius:6px;cursor:pointer;border:2px solid transparent;position:relative;-webkit-tap-highlight-color:transparent}
+.bench-unit{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#0f3460;border-radius:6px;cursor:pointer;border:2px solid transparent;position:relative;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
 .bench-unit.selected{border-color:#ffd700;background:#1a3a60}
 .bench-unit .star-badge{position:absolute;top:-3px;right:-3px;background:#ff6b6b;color:#fff;font-size:8px;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .msg{text-align:center;font-size:12px;color:#e94560;min-height:16px;padding:2px}
@@ -56,7 +56,7 @@ body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',sans-serif}
 .dpad .dp:active,.dpad .dp.pressed{background:#2a4a7a!important;color:#fff!important}
 .kh-btn:active,.kh-btn.pressed,.btn:active,.btn.pressed{transform:scale(.95);opacity:.8}
 .dpad .dp.empty{background:transparent!important;border:none!important;cursor:default}
-.atk-btn{padding:8px 14px!important;background:#e94560!important;border:none!important;border-radius:6px!important;color:#fff!important;font-size:14px!important;font-weight:bold;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .1s;min-width:56px!important;display:flex!important;align-items:center;justify-content:center}
+.atk-btn{padding:8px 14px!important;background:#e94560!important;border:none!important;border-radius:6px!important;color:#fff!important;font-size:14px!important;font-weight:bold;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;transition:all .1s;min-width:56px!important;display:flex!important;align-items:center;justify-content:center}
 .atk-btn:active,.atk-btn.pressed{background:#ff6b8a;transform:scale(.96)}
 .atk-btn.on{background:#ff6b8a;box-shadow:0 0 12px rgba(233,69,96,.5)}
 </style>
