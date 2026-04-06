@@ -40,7 +40,7 @@ body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',sans-serif;overflow-x:
 .msg{text-align:center;font-size:12px;color:#e94560;min-height:16px;padding:2px}
 .label{font-size:10px;color:#555;text-align:center;margin:2px 0}
 .help{text-align:center;font-size:10px;color:#444;padding:4px}
-.king-hud{display:flex;align-items:center;gap:6px;padding:4px 8px;background:linear-gradient(135deg,#2c1810,#4a2520);border:1px solid #ffd700;border-radius:6px;margin:4px 0;flex-wrap:wrap;justify-content:center}
+.king-hud{display:flex!important;align-items:center;gap:6px;padding:8px!important;background:linear-gradient(135deg,#2c1810,#4a2520)!important;border:1px solid #ffd700!important;border-radius:6px;margin:4px 0;flex-wrap:wrap;justify-content:center;overflow:visible!important}
 .king-hud .kh-label{font-size:11px;color:#ffd700;font-weight:bold}
 .king-hud .kh-stat{font-size:10px;color:#ccc;padding:2px 5px;background:#111;border-radius:3px}
 .king-hud .kh-btn{font-size:10px;padding:3px 8px;border:1px solid #888;border-radius:4px;background:#222;color:#eee;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -49,13 +49,13 @@ body{background:#1a1a2e;color:#eee;font-family:'Segoe UI',sans-serif;overflow-x:
 .king-hud .kh-btn.manual{border-color:#e94560;color:#e94560;background:#3a1010}
 
 /* D-pad controls for king */
-.king-controls{display:flex;gap:8px;justify-content:center;align-items:center;margin:6px 0;flex-wrap:wrap}
+.king-controls{display:flex!important;gap:8px;justify-content:center;align-items:center;margin:6px 0;flex-wrap:wrap}
 .king-controls.hidden{display:none}
-.dpad{display:grid;grid-template-columns:repeat(3,38px);grid-template-rows:repeat(3,32px);gap:2px}
-.dpad .dp{display:flex;align-items:center;justify-content:center;font-size:16px;background:#1a2a4a;border:1px solid #3a5a8a;border-radius:6px;color:#4ecdc4;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .1s}
+.dpad{display:grid!important;grid-template-columns:repeat(3,44px)!important;grid-template-rows:repeat(3,38px)!important;gap:3px!important}
+.dpad .dp{display:flex!important;align-items:center;justify-content:center;font-size:18px;background:#1a2a4a!important;border:2px solid #4ecdc4!important;border-radius:8px;color:#4ecdc4!important;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .1s;min-width:42px;min-height:38px}
 .dpad .dp:active,.dpad .dp.pressed{background:#2a4a7a;color:#fff}
-.dpad .dp.empty{background:transparent;border:none;cursor:default}
-.atk-btn{padding:8px 18px;background:#e94560;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:bold;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .1s;min-width:60px}
+.dpad .dp.empty{background:transparent!important;border:none!important;cursor:default}
+.atk-btn{padding:10px 20px;background:#e94560!important;border:none!important;border-radius:8px;color:#fff!important;font-size:16px!important;font-weight:bold;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .1s;min-width:70px!important;display:flex!important;align-items:center;justify-content:center}
 .atk-btn:active,.atk-btn.pressed{background:#ff6b8a;transform:scale(.96)}
 .atk-btn.on{background:#ff6b8a;box-shadow:0 0 12px rgba(233,69,96,.5)}
 </style>
