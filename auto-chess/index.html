@@ -1420,36 +1420,39 @@ function tick(){
       else if(u.kingMode==='range')attackRange=3;
     }
 
-    // King: only move/auto-chase when not in manual mode
-    if(u.isKing && md > attackRange*cw+15){
-      // Manual mode: D-pad movement (only when direction held)
-      if(kingManual && kingDir){
-        updateDpadVisual();
-        let sdx=0,sdy=0;
-        if(kingDir==='up')sdy=-1;
-        else if(kingDir==='down')sdy=1;
-        else if(kingDir==='left')sdx=-1;
-        else if(kingDir==='right')sdx=1;
-        if(sdx||sdy){
-          u.x+=sdx*2.5;
-          u.y+=sdy*2.5;
+    // King: manual mode = player has FULL control, no auto behavior
+    if(u.isKing){
+      if(kingManual){
+        // Manual mode: ONLY move if D-pad held, ONLY attack if button pressed
+        if(md <= attackRange*cw+15){
+          // In range - only attack if cooldown was just reset by button
+          if(u.cd > 0) return; // On cooldown, do nothing
+          // cd was reset - fall through to attack
+        } else {
+          // Out of range - only move if D-pad held, otherwise do nothing
+          if(!kingDir) return;
+          updateDpadVisual();
+          let sdx=0,sdy=0;
+          if(kingDir==='up')sdy=-1;
+          else if(kingDir==='down')sdy=1;
+          else if(kingDir==='left')sdx=-1;
+          else if(kingDir==='right')sdx=1;
+          if(sdx||sdy){
+            u.x+=sdx*2.5;
+            u.y+=sdy*2.5;
+          }
+          u.cd=0;
+          return;
         }
-        u.cd=0;
       } else {
-        // Auto mode: always chase nearest enemy
-        const dx=near.x-u.x,dy=near.y-u.y,dd=Math.hypot(dx,dy);
-        if(dd>0){u.x+=dx/dd*1.8;u.y+=dy/dd*1.8;}
-        u.cd=0;
+        // Auto mode: always chase and attack
+        if(md > attackRange*cw+15){
+          const dx=near.x-u.x,dy=near.y-u.y,dd=Math.hypot(dx,dy);
+          if(dd>0){u.x+=dx/dd*1.8;u.y+=dy/dd*1.8;}
+          u.cd=0;
+          return;
+        }
       }
-      return; // Either mode: if was out of range, we moved and done for this tick
-    }
-
-    // King manual mode: if in range, still attack but don't move (let player control)
-    // Exception: if attack was just triggered by button (cd was just reset), allow attack
-    if(u.isKing && kingManual && md<=attackRange*cw+15){
-      // In range and manual mode: don't auto-attack if cooldown not reset
-      if(u.cd > 0) return; // Still on cooldown, don't attack
-      // cd was reset by attack button, fall through to attack
     }
 
     if(md<=attackRange*cw+15){
